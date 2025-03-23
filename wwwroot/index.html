@@ -5,8 +5,21 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Hello world!</h1>
-        <p id="secret-message"></p>
+        <div
+            class="mt-4 mx-4"
+            data-signals="{secret: ''}"
+        >
+            <button data-on-click="@get('/home/secret')" class="btn btn-success">Load</button>
+            <div data-show="$secret != ''">
+                <h3>The secret is:</h3>
+                <p data-text="$secret" />
+            </div>
+            <div data-show="$secret == ''">
+                <h3>Secret isn't loaded...</h3>
+            </div>
+        </div>
+
+        <!-- Scripts -->
         <script src="../js/index.js"></script>
         <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-beta.9/bundles/datastar.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

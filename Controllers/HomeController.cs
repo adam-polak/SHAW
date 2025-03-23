@@ -1,13 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
+using StarFederation.Datastar.DependencyInjection;
 
 namespace SHAW.Controllers;
 
 [Route("home")]
 public class HomeController : ControllerBase
 {
-    [HttpGet("secret")]
-    public IActionResult GetSecretMessage()
+    private IDatastarServerSentEventService _sse;
+
+    public HomeController(IDatastarServerSentEventService sse)
     {
-        return Ok("A very secret message");
+        _sse = sse;
+    }
+
+    [HttpGet("secret")]
+    public async Task GetSecretMessage()
+    {
+        await _sse.MergeSignalsAsync("{secret: 'hello world'}");
     }
 }
