@@ -9,13 +9,21 @@ public static class DbConnectionFactory
 
     private static string CreateMySqlConnectionString(string username, string password)
     {
-        return $"Server=localhost;Database={DatabaseName};Uid={username};Pwd={password};";
-        //return $"mysql://{username}:{password}@localhost:3306/shawdb";
+        return CreateMySqlConnectionString(username, password, DatabaseName);
+    }
+
+    private static string CreateMySqlConnectionString(string username, string password, string database)
+    {
+        return $"Server=localhost;Database={database};Uid={username};Pwd={password};";
     }
 
     private static void SetupDatabase(string username, string password)
     {
-        // TODO
+        string connectionString = CreateMySqlConnectionString(username, password, "sys"); 
+        using(AutoDbConnection conn = new AutoDbConnection(new MySqlConnection(connectionString))) 
+        {
+            // TODO
+        }
         throw new NotImplementedException();
     }
 
