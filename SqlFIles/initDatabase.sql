@@ -1,6 +1,8 @@
 /*
-    File to setup all the tables in the database
+    File to initialize the SHAW database
 */
+
+CREATE DATABASE shawdb; 
 
 CREATE TABLE roles (
     Id INTEGER PRIMARY KEY,
@@ -11,12 +13,14 @@ CREATE TABLE users (
     Id INTEGER PRIMARY KEY,
     Username VARCHAR(20),
     Password VARCHAR(20),
-    RoleId INTEGER FOREIGN KEY REFERENCES roles(Id)
+    RoleId INTEGER,
+    FOREIGN KEY (RoleId) REFERENCES roles(Id)
 );
 
 CREATE TABLE posts (
     Id INTEGER PRIMARY KEY,
-    UserId INTEGER FOREIGN KEY REFERENCES users(Id),
+    UserId INTEGER,
+    FOREIGN KEY (UserId) REFERENCES users(Id),
     Title VARCHAR(100),
     Body VARCHAR(1000),
     CreatedOn DATE
@@ -26,6 +30,8 @@ CREATE TABLE responses (
     Id INTEGER PRIMARY KEY,
     Content VARCHAR(1000),
     CreatedOn DATE,
-    UserId INTEGER FOREIGN KEY REFERENCES users(id),
-    PostId INTEGER FOREIGN KEY REFERENCES posts(id)
+    UserId INTEGER,
+    PostId INTEGER,
+    FOREIGN KEY (UserId) REFERENCES users(id),
+    FOREIGN KEY (PostId) REFERENCES posts(id)
 );

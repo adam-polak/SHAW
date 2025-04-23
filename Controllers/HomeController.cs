@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using StarFederation.Datastar.DependencyInjection;
-using SHAW.DataAccess.Util;
-using System.Data.Common;
 
 namespace SHAW.Controllers;
 
@@ -20,8 +18,6 @@ public class HomeController : ControllerBase
     [HttpGet("secret")]
     public async Task GetSecretMessage()
     {
-        DbConnection conn = DbConnectionFactory.CreateDbConnection(_env);
-        Console.WriteLine(conn.Database);
         await _sse.MergeSignalsAsync("{secret: 'hello world'}");
     }
 }

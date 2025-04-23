@@ -1,5 +1,7 @@
 using SHAW.Util;
 using MySql.Data.MySqlClient;
+using Dapper;
+using System.Text;
 
 namespace SHAW.DataAccess.Util;
 
@@ -17,14 +19,67 @@ public static class DbConnectionFactory
         return $"Server=localhost;Database={database};Uid={username};Pwd={password};";
     }
 
+    private static string? GetNextSqlCommand(StreamReader reader)
+    {
+        string? line;
+        bool isComment = false;
+        StringBuilder sb = new StringBuilder();
+        while((line = reader.ReadLine()) != null)
+        {
+            line = line.Trim();
+            if(!isComment)
+            {
+                if(line.StartsWith("/*"))
+                {
+                    if(line.EndsWith("*/"))
+                    {
+                        continue;
+                    }
+
+                    isComment = true;
+                } else if(line.StartsWith('#'))
+                {
+                    continue;
+                }
+            } else if(isComment) {
+                isComment = line.EndsWith("*/");
+                continue;
+            }
+
+            sb.Append(line);
+            if(line.EndsWith(';'))
+            {
+                break;
+            }
+        }
+
+        if(line == null || sb.Length == 0)
+        {
+            return null;
+        }
+
+        return sb.ToString();
+    }
+
     private static void SetupDatabase(string username, string password)
     {
         string connectionString = CreateMySqlConnectionString(username, password, "sys"); 
         using(AutoDbConnection conn = new AutoDbConnection(new MySqlConnection(connectionString))) 
         {
-            // TODO
+            FileStream initFileStream = File.Open("./SqlFiles/initDatabase.sql", FileMode.Open);
+            using(StreamReader reader = new StreamReader(initFileStream))
+            {
+                string? sqlCommand;
+                while((sqlCommand = GetNextSqlCommand(reader)) != null)
+                {
+                    conn.Execute(sqlCommand);
+                    if(sqlCommand.Contains("CREATE DATABASE"))
+                    {
+                        conn.ChangeDatabase(DatabaseName);
+                    }
+                }
+            }
         }
-        throw new NotImplementedException();
     }
 
     private static AutoDbConnection TryCreateDbConnection(IHostEnvironment env, bool firstTime)
