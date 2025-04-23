@@ -13,24 +13,33 @@ public class AutoDbConnection : DbConnection
         _connection.OpenAsync().Wait();
     }
 
-    public override string ConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override string ConnectionString 
+    { 
+        get => _connection.ConnectionString;
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
+        set
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
+        {
+            _connection.ConnectionString = value;
+        } 
+    }
 
-    public override string Database => throw new NotImplementedException();
+    public override string Database => _connection.Database;
 
-    public override string DataSource => throw new NotImplementedException();
+    public override string DataSource => _connection.DataSource;
 
-    public override string ServerVersion => throw new NotImplementedException();
+    public override string ServerVersion => _connection.ServerVersion;
 
-    public override ConnectionState State => throw new NotImplementedException();
+    public override ConnectionState State => _connection.State;
 
     public override void ChangeDatabase(string databaseName)
     {
-        throw new NotImplementedException();
+        _connection.ChangeDatabase(databaseName);
     }
 
     public override void Close()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public override ValueTask DisposeAsync()
@@ -42,16 +51,16 @@ public class AutoDbConnection : DbConnection
 
     public override void Open()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
     {
-        throw new NotImplementedException();
+        return _connection.BeginTransaction(isolationLevel);
     }
 
     protected override DbCommand CreateDbCommand()
     {
-        throw new NotImplementedException();
+        return _connection.CreateCommand();
     }
 }
