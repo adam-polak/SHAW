@@ -45,7 +45,7 @@ public class AutoDbConnection : DbConnection
     public override ValueTask DisposeAsync()
     {
         _connection.CloseAsync().Wait();
-        _connection.DisposeAsync();
+        _connection.DisposeAsync().AsTask().Wait();
         return base.DisposeAsync();
     }
 
