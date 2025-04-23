@@ -1,5 +1,6 @@
 /*
     File to initialize the SHAW database
+    - program will run these commands if the 'shawdb' is not found on your MySQL
 */
 
 CREATE DATABASE shawdb; 
