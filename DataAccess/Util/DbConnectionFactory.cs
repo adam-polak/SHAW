@@ -27,22 +27,19 @@ public static class DbConnectionFactory
         while((line = reader.ReadLine()) != null)
         {
             line = line.Trim();
-            if(!isComment)
-            {
+            if(line.Length == 0) {
+                continue;
+            } else if(!isComment) {
                 if(line.StartsWith("/*"))
                 {
-                    if(line.EndsWith("*/"))
-                    {
-                        continue;
-                    }
-
-                    isComment = true;
+                    isComment = !line.EndsWith("*/");
+                    continue;
                 } else if(line.StartsWith('#'))
                 {
                     continue;
                 }
-            } else if(isComment) {
-                isComment = line.EndsWith("*/");
+            } else {
+                isComment = !line.EndsWith("*/");
                 continue;
             }
 
@@ -73,7 +70,7 @@ public static class DbConnectionFactory
                 while((sqlCommand = GetNextSqlCommand(reader)) != null)
                 {
                     conn.Execute(sqlCommand);
-                    if(sqlCommand.Contains("CREATE DATABASE"))
+                    if(sqlCommand.StartsWith("CREATE DATABASE"))
                     {
                         conn.ChangeDatabase(DatabaseName);
                     }
