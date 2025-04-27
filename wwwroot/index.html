@@ -1,28 +1,93 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login | UWM Portal</title>
 
-<html>
-    <head>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    </head>
-    <body>
-        <div
-            class="mt-4 mx-4"
-            data-signals="{secret: ''}"
-        >
-            <button data-on-click="@get('/home/secret')" class="btn btn-success">Load</button>
-            <div data-show="$secret != ''">
-                <h3>The secret is:</h3>
-                <p data-text="$secret" />
-            </div>
-            <div data-show="$secret == ''">
-                <h3>Secret isn't loaded...</h3>
-            </div>
-        </div>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Scripts -->
-        <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-beta.9/bundles/datastar.js"></script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    </body>
+  <style>
+  body {
+    background: linear-gradient(to right, #64b4ca, #a5f6b5); /* soft teal to pink */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* softer shadow */
+    width: 100%;
+    max-width: 400px;
+  }
+  .login-card .logo {
+    font-weight: bold;
+    font-size: 2rem;
+    background: linear-gradient(45deg, #f65353, #ef5289); /* smooth warm gradient */
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .form-control {
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+  }
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(253, 203, 110, 0.5);
+    border-color: #fdcb6e;
+  }
+  .btn-primary {
+    background-color: #6c5ce7;
+    border-color: #6c5ce7;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  .btn-primary:hover {
+    background-color: #5e4db2;
+    border-color: #5e4db2;
+  }
+  .text-center a {
+    color: #6c5ce7;
+    font-weight: 500;
+  }
+  .text-center a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+</head>
+
+<body>
+
+  <div class="login-card">
+    <div class="logo">SHAW CONNECT</div>
+    <h4 class="text-center mb-4">Sign In</h4>
+
+    <form>
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="#" class="text-decoration-none">Forgot Password?</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
