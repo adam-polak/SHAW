@@ -20,7 +20,7 @@ public class UserController : ControllerBase
         _env = env;
     }
 
-    [HttpGet("login")]
+    [HttpPost("login")]
     public async Task Login()
     {
         string signal = await _reader.ReadSignalsAsync();
