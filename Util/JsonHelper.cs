@@ -7,7 +7,7 @@ public static class JsonHelper
 {
     public static string? GetJsonSecret(string key)
     {
-        using(StreamReader reader = new StreamReader("./connection.json"))
+        using(StreamReader reader = new StreamReader("secrets.json"))
         {
             string json = reader.ReadToEnd();
             JObject? obj = JsonConvert.DeserializeObject<JObject>(json);

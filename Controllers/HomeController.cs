@@ -7,10 +7,12 @@ namespace SHAW.Controllers;
 public class HomeController : ControllerBase
 {
     private IDatastarServerSentEventService _sse;
+    private IHostEnvironment _env;
 
-    public HomeController(IDatastarServerSentEventService sse)
+    public HomeController(IDatastarServerSentEventService sse, IHostEnvironment env)
     {
         _sse = sse;
+        _env = env;
     }
 
     [HttpGet("secret")]
