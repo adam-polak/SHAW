@@ -15,7 +15,8 @@ CREATE TABLE users (
     Username VARCHAR(20),
     Password VARCHAR(20),
     RoleId INTEGER,
-    FOREIGN KEY (RoleId) REFERENCES roles(Id)
+    FOREIGN KEY (RoleId) REFERENCES roles(Id),
+    LoginKey VARCHAR(100) UNIQUE
 );
 
 CREATE TABLE posts (

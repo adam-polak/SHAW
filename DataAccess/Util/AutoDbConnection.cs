@@ -3,9 +3,9 @@ using System.Data.Common;
 
 namespace SHAW.DataAccess.Util;
 
-public class AutoDbConnection : DbConnection
+public class AutoDbConnection : DbConnection, IAsyncDisposable
 {
-    private DbConnection _connection;
+    protected DbConnection _connection;
 
     public AutoDbConnection(DbConnection connection)
     {
@@ -39,7 +39,7 @@ public class AutoDbConnection : DbConnection
 
     public override void Close()
     {
-        throw new NotSupportedException();
+        // Do nothing
     }
 
     public override ValueTask DisposeAsync()
@@ -51,7 +51,7 @@ public class AutoDbConnection : DbConnection
 
     public override void Open()
     {
-        throw new NotSupportedException();
+        // Do nothing
     }
 
     protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
