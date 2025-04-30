@@ -3,6 +3,9 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# Secrets
+secrets.json
+
 # Extra
 .vscode
 
