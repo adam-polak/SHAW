@@ -30,7 +30,7 @@
         <input type="password" data-bind="password" class="form-control" id="password" placeholder="Enter password" required>
       </div>
 
-      <label id="error-message" class="text-danger text-center" data-text="$error" data-attr="{disabled: $valid != ''}"></label>
+      <label id="error-message" class="text-danger text-center" data-text="$error" data-attr="{hidden: $valid != ''}"></label>
       <div class="d-grid">
         <button data-on-click="@post('/user/login')"
                 data-on-keydown__window="evt.key == 'Enter' && @post('/user/login')"
