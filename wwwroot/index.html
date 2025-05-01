@@ -18,7 +18,6 @@
                            $valid == 'fail' ? 'Server error' : ''
                           ">
       
-      
       <h4 class="text-center mb-4">Sign in</h4>
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
@@ -30,7 +29,7 @@
         <input type="password" data-bind="password" class="form-control" id="password" placeholder="Enter password" required>
       </div>
 
-      <label id="error-message" class="text-danger text-center" data-text="$error" data-attr="{hidden: $valid != ''}"></label>
+      <label id="error-message" class="text-danger text-center" data-text="$error" data-show="$valid != ''"></label>
       <div class="d-grid">
         <button data-on-click="@post('/user/login')"
                 data-on-keydown__window="evt.key == 'Enter' && @post('/user/login')"
