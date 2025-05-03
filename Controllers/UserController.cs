@@ -211,7 +211,6 @@ public class UserController : ControllerBase
                 <h4 class='text-center mb-4'>Redirecting...</h4>
             </main>
         ");
-        await Task.Delay(timeout);
-        await _sse.ExecuteScriptAsync($"setTimeout(() => window.location.href = '{url}')");
+        await _sse.ExecuteScriptAsync($"setTimeout(() => window.location.href = '{url}',{timeout})");
     }
 }
