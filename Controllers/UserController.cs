@@ -35,13 +35,6 @@ public class UserController : ControllerBase
         await _sse.MergeFragmentsAsync(Templates.loginTemplate(model));
     }
 
-    [HttpGet("testsuccess")]
-    public async Task TestSuccess()
-    {
-        await MorphSuccessAndRedirect("/user/login");   
-    }
-
-
     [HttpGet("register")]
     public async Task RegisterPage()
     {
