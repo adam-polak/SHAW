@@ -35,6 +35,13 @@ public class UserController : ControllerBase
         await _sse.MergeFragmentsAsync(Templates.loginTemplate(model));
     }
 
+    [HttpGet("testsuccess")]
+    public async Task TestSuccess()
+    {
+        await MorphSuccessAndRedirect("/user/login");   
+    }
+
+
     [HttpGet("register")]
     public async Task RegisterPage()
     {
@@ -198,5 +205,20 @@ public class UserController : ControllerBase
                 <a data-on-click=""@get('/user/login')"" class=""text-decoration-none"">Already have an account?</a>
         </div></div></main>";
         }
+    }
+
+    public async Task MorphSuccessAndRedirect(string url, int timeout = 1000)
+    {
+        // Render Big Checkmark and "Redirecting..."
+        await _sse.MergeFragmentsAsync($@"
+            <main id='morph'>
+               <div class='display-1 text-center text-success mb-3'>
+                    <i class='bi bi-check-circle-fill'></i>
+                </div> 
+                <h4 class='text-center mb-4'>Redirecting...</h4>
+            </main>
+        ");
+        await Task.Delay(timeout);
+        await _sse.ExecuteScriptAsync($"setTimeout(() => window.location.href = '{url}')");
     }
 }
