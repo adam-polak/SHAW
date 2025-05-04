@@ -153,7 +153,7 @@ public class UserController : ControllerBase
         {
             return $@"
         <main id=""morph"">
-        <div data-signals=""{{r_account_type: '{register.r_account_type}', r_username: '{register.r_username}', r_password: '{register.r_password}', r_email: '{register.r_email}', r_error: '{register.r_error}'}}"">
+        <div data-signals=""{{r_account_type: '{register.r_account_type}', r_username: '{register.r_username}', r_password: '{register.r_password}', r_error: '{register.r_error}'}}"">
             <h4 class=""text-center mb-4"">Register</h4>
             <label class=""text-center mb-2"">Account Type</label>
             <div class=""btn-group d-flex"" role=""group"">
@@ -178,11 +178,6 @@ public class UserController : ControllerBase
                 <label for=""password"" class=""form-label"">Password</label>
                 <input type=""password"" data-bind=""r_password"" class=""form-control"" id=""password""
                        placeholder=""Enter password"" required>
-            </div>
-            <div class=""mb-3"">
-                <label for=""email"" class=""form-label"">Email Address</label>
-                <input type=""email"" data-bind=""r_email"" class=""form-control"" id=""email"" placeholder=""Enter email""
-                       required>
             </div>
             <label id=""error-message""
                    class=""text-danger text-center""
