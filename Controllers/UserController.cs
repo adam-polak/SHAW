@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1;
+using SHAW.Controllers.Util;
 using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 using StarFederation.Datastar.DependencyInjection;
-using EnvironmentName = Microsoft.AspNetCore.Hosting.EnvironmentName;
 
 namespace SHAW.Controllers;
 
@@ -44,26 +42,27 @@ public class UserController : ControllerBase
             r_account_type = "",
             r_username = "",
             r_password = "",
-            r_email = "",
             r_error = ""
         };
 
         await _sse.MergeFragmentsAsync(Templates.registerTemplate(model));
     }
 
+    private DataAccess.Controllers.UserController CreateUserDbController()
+    {
+        return new DataAccess.Controllers.UserController(
+            DbConnectionFactory.CreateDbConnection(_env)
+        );
+    }
+
     [HttpPost("login")]
     public async Task Login()
     {
-        string signal = await _reader.ReadSignalsAsync();
 
-        LoginSignalModel? user;
+        LoginSignalModel user;
         try
         {
-            user = JsonConvert.DeserializeObject<LoginSignalModel>(signal);
-            if (user == null)
-            {
-                throw new Exception("Failed to convert signal to user");
-            }
+            user = await SignalUtil.GetModelFromSignal<LoginSignalModel>(_reader);
         }
         catch
         {
@@ -71,11 +70,7 @@ public class UserController : ControllerBase
             return;
         }
 
-        using (
-            DataAccess.Controllers.UserController controller = new DataAccess.Controllers.UserController(
-                DbConnectionFactory.CreateDbConnection(_env)
-            )
-        )
+        using(var controller = CreateUserDbController())
         {
             string? loginKey;
             try
@@ -92,6 +87,41 @@ public class UserController : ControllerBase
             }
 
             await _sse.MergeSignalsAsync($"{{valid: '{loginKey ?? "invalid"}'}}");
+        }
+    }
+
+    [HttpPost("register")]
+    public async Task Register()
+    {
+        RegisterSignalModel register;
+        try 
+        {
+            register = await SignalUtil.GetModelFromSignal<RegisterSignalModel>(_reader);
+        }
+        catch
+        {
+            await _sse.MergeSignalsAsync("{r_error: '* An error occurred'}");
+            return;
+        }
+
+        using(var controller = CreateUserDbController())
+        {
+            try
+            {
+                await controller.CreateUserOrThrow(
+                    new CreateUserModel() {
+                        Username = register.r_username,
+                        Password = register.r_password,
+                        Role = EnumFactory.GetRoleType(register.r_account_type)
+                    }
+                );
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                await _sse.MergeSignalsAsync("{r_error: '* Failed to create user'}");
+                return;
+            }
         }
     }
 
@@ -118,8 +148,8 @@ public class UserController : ControllerBase
     <main id=""morph"">
     <div
       data-signals=""{{username: '{login.username}', password: '{login.password}', valid: '{login.valid}'}}""
-      data-computed-error=""$valid == 'invalid' ? 'Invalid username or password' :
-                           $valid == 'fail' ? 'Server error' : ''
+      data-computed-error=""$valid == 'invalid' ? '* Invalid username or password' :
+                           $valid == 'fail' ? '* Server error' : ''
                           "">
       
       <h4 class=""text-center mb-4"">Sign in</h4>

@@ -19,12 +19,23 @@ public class UserController : AutoDbConnection
     public async Task<string?> CorrectLogin(LoginModel login)
     {
         string sql = "SELECT loginkey FROM users"
-                    + " WHERE username = @username AND password = @password;";
-        object obj = new { username = login.Username, password = login.Password };
-        string? loginKey = (await _connection.QueryAsync<string>(sql, obj))
+                    + " WHERE username = @Username AND password = @Password;";
+        string? loginKey = (await _connection.QueryAsync<string>(sql, login))
             .ToList()
             .FirstOrDefault();
 
         return loginKey;    
+    }
+
+    /// <summary>
+    /// Try to create a user with the given Username and Password
+    /// </summary>
+    /// <param name="user">The LoginModel to create a user based off</param>
+    /// <returns></returns>
+    public async Task CreateUserOrThrow(CreateUserModel user)
+    {
+        string sql = "INSERT INTO users (username, password, roleid)"
+                    + " VALUES (@Username, @Password, @Role);";
+        await _connection.ExecuteAsync(sql, user);
     }
 }

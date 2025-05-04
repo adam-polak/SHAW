@@ -12,7 +12,7 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    Username VARCHAR(20),
+    Username VARCHAR(20) UNIQUE,
     Password VARCHAR(20),
     RoleId INTEGER,
     FOREIGN KEY (RoleId) REFERENCES roles(Id),
