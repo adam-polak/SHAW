@@ -107,7 +107,6 @@ public class UserController : ControllerBase
         public required string r_account_type { get; set; }
         public required string r_username { get; set; }
         public required string r_password { get; set; }
-        public required string r_email { get; set; }
         public required string r_error { get; set; }
     }
 
