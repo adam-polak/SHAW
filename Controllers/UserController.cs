@@ -112,7 +112,7 @@ public class UserController : ControllerBase
                     new CreateUserModel() {
                         Username = register.r_username,
                         Password = register.r_password,
-                        Role = EnumFactory.GetRoleType(register.r_account_type)
+                        Role = EnumFactory.GetRoleType(_env, register.r_account_type)
                     }
                 );
             }
