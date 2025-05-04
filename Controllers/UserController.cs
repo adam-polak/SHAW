@@ -32,6 +32,7 @@ public class UserController : ControllerBase
             password = "",
             valid = ""
         };
+
         await _sse.MergeFragmentsAsync(Templates.loginTemplate(model));
     }
 
@@ -46,6 +47,7 @@ public class UserController : ControllerBase
             r_email = "",
             r_error = ""
         };
+
         await _sse.MergeFragmentsAsync(Templates.registerTemplate(model));
     }
 
@@ -140,7 +142,7 @@ public class UserController : ControllerBase
       </div>
 
       <div class=""text-center mt-3"">
-        <a data-on-click=""@get('/user/register')"" class=""text-decoration-none"">Don't have an account yet?</a>
+        <a data-on-click=""@get('/user/register')"" href=""#"" class=""text-decoration-none"">Don't have an account yet?</a>
       </div>
     </div>
     </main>
@@ -194,9 +196,11 @@ public class UserController : ControllerBase
                 </button>
             </div>
 
-            <div class=""text-center mt-3"">
-                <a data-on-click=""@get('/user/login')"" class=""text-decoration-none"">Already have an account?</a>
-        </div></div></main>";
+            <div class=""text-center mt-3 hover"">
+                <a data-on-click=""@get('/user/login')"" href=""#"" class=""text-decoration-none"">Already have an account?</a>
+            </div>
+        </div>
+        </main>";
         }
     }
 
