@@ -1,6 +1,5 @@
 using System.Data.Common;
 using Dapper;
-using Org.BouncyCastle.Bcpg.Sig;
 using SHAW.DataAccess.Util;
 
 public enum RoleType

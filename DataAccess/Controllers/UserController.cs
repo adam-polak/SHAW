@@ -1,6 +1,5 @@
 using System.Data.Common;
 using Dapper;
-using Org.BouncyCastle.Crypto;
 using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 
