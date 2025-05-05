@@ -12,10 +12,16 @@ public class HomeController : ControllerBase
     private IHostEnvironment _env;
 
     public HomeController(
-        IHostEnvironment env)
+        IHostEnvironment env,
+        IDatastarServerSentEventService sse,
+        IDatastarSignalsReaderService reader
+    )
     {
         _env = env;
+        _sse = sse;
+        _reader = reader;
     }
+
     [HttpGet("")]
     public async Task<IActionResult> HomePage(string token)
     {
@@ -24,6 +30,7 @@ public class HomeController : ControllerBase
         {
             return Unauthorized("Bad token.");
         }
+
         const string fileName = "home.html";
         return PhysicalFile(
             Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName),
