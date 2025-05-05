@@ -24,7 +24,7 @@ public class HomeController : ControllerBase
     [HttpGet("")]
     public async Task<IActionResult> HomePage(string key)
     {
-        if (!string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
+        if (string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
         using (var c = CreateUserDbController())
         {
             var isValid = await c.ValidateLoginKey(key);

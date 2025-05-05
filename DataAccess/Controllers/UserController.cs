@@ -84,7 +84,7 @@ public class UserController : AutoDbConnection
                     .QueryAsync<int>(sql, new {Key = key}))
                     .First();
         }
-        catch (Exception ex)
+        catch
         {
             return null;
         }
