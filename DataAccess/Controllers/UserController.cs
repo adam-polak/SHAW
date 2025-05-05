@@ -44,7 +44,7 @@ public class UserController : AutoDbConnection
             loginKey = LoginKey.Create();
             sql = "UPDATE users SET loginkey = @Key"
                 + " WHERE username = @Username AND password = @Password";
-            object obj = new { Key = loginKey, Username = login.Username, Password = login.Password };
+            object obj = new { Key = loginKey, login.Username, login.Password };
             await _connection.ExecuteAsync(sql, obj);
         }
 
