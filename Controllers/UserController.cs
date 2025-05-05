@@ -90,7 +90,7 @@ public class UserController : ControllerBase
             {
                 await _sse.MergeSignalsAsync("{valid: 'invalid'}");
             } else {
-                await MorphSuccessAndRedirect("/home?key=" + loginKey);
+                await MorphSuccessAndRedirect("/home?key=" + loginKey, loginKey:loginKey);
             }
         }
     }
@@ -239,12 +239,12 @@ public class UserController : ControllerBase
         }
     }
 
-    public async Task MorphSuccessAndRedirect(string url, int timeout = 1000)
+    public async Task MorphSuccessAndRedirect(string url, int timeout = 1000, string loginKey = "")
     {
         // Render Big Checkmark and "Redirecting..."
         await _sse.MergeFragmentsAsync($@"
             <main id='morph'>
-               <div class='display-1 text-center text-success mb-3'>
+               <div data-signals-login-key='{ loginKey }' data-persist='loginKey' class='display-1 text-center text-success mb-3'>
                     <i class='bi bi-check-circle-fill'></i>
                 </div> 
                 <h4 class='text-center mb-4'>Redirecting...</h4>
