@@ -5,6 +5,7 @@ using SHAW.Controllers.Util;
 using SHAW.DataAccess.Controllers;
 using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
+
 namespace SHAW.Controllers;
 
 [Route("home")]
@@ -26,19 +27,15 @@ public class HomeController : ControllerBase
         if (!string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
         using (var c = CreateUserDbController())
         {
-            bool? isValid = await c.ValidateLoginKey(key);
-            switch (isValid)
+            var isValid = await c.ValidateLoginKey(key);
+            return isValid switch
             {
-                case true:
-                    return PhysicalFile(
-                        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "home.html"),
-                        "text/html"
-                    );
-                case false:
-                    return BadRequest("Invalid login key");
-                case null:
-                    return BadRequest("Server error");
-            }
+                true => PhysicalFile(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "home.html"),
+                    "text/html"),
+                false => BadRequest("Invalid login key"),
+                null => BadRequest("Server error")
+            };
         }
     }
 }
