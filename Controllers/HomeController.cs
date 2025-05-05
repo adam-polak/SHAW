@@ -26,15 +26,19 @@ public class HomeController : ControllerBase
         if (!string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
         using (var c = CreateUserDbController())
         {
-            bool isValid = await c.ValidateLoginKey(key);
-            if (!isValid)
+            bool? isValid = await c.ValidateLoginKey(key);
+            switch (isValid)
             {
-                return Unauthorized("Invalid Token.");
+                case true:
+                    return PhysicalFile(
+                        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "home.html"),
+                        "text/html"
+                    );
+                case false:
+                    return BadRequest("Invalid login key");
+                case null:
+                    return BadRequest("Server error");
             }
-            return PhysicalFile(
-                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "home.html"),
-                "text/html"
-            );
         }
     }
 }

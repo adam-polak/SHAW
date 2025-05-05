@@ -74,18 +74,21 @@ public class UserController : AutoDbConnection
     /// Try to validate a login-key for a user
     /// </summary>
     /// <param name="loginKey">The LoginKey provided when you log in</param>
-    public async Task<bool> ValidateLoginKey(string key)
+    public async Task<bool?> ValidateLoginKey(string key)
     {
+        int count;
         string sql = "SELECT COUNT(*) FROM users WHERE LoginKey = @Key";
         try
-        {
-            var count = await _connection.QuerySingleAsync<int>(sql, key);
-            return count > 0;
+        { 
+            count = (await _connection
+                    .QueryAsync<int>(sql, new {Key = key}))
+                    .First();
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            return null;
         }
+        return count > 0;
     }
 
 
