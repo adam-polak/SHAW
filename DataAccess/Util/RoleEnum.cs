@@ -8,7 +8,7 @@ public enum RoleType
     Counselor
 }
 
-public static class EnumFactory
+public static class RoleFactory
 {
     private static bool RoleTypesLoaded = false;
     private static object LockRoleTypesLoaded = new object();
@@ -77,7 +77,17 @@ public static class EnumFactory
                     return;
                 }
 
-                // TODO insert into database
+                // Delete current roles table
+                connection.Execute("DELETE FROM roles;");
+
+                // Update current roles table
+                string sql = "INSERT INTO roles (id, name)"
+                            + " VALUES (@id, @name)";
+                foreach(string key in dict.Keys)
+                { 
+                    object obj = new { id = dict.GetValueOrDefault(key), name = key };
+                    connection.Execute(sql, obj);
+                }
             }
         }
     }
