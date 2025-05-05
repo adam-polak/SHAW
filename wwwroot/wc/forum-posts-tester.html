@@ -55,9 +55,9 @@
         <forum-posts
                 data-attr-title="$title"
                 data-attr-posts='$posts'
-                data-on-post-selected='$selected = JSON.stringify(evt.detail.value, null, 2)'>
+                data-on-post-selected='$selected = evt.detail.value'>
         </forum-posts>
-        <pre data-text="$selected"></pre>
+        <pre data-text="ctx.signals.JSON()"></pre>
 
     </div>
 </div>
