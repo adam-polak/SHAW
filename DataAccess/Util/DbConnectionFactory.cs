@@ -8,6 +8,10 @@ namespace SHAW.DataAccess.Util;
 public static class DbConnectionFactory
 {
     private static string DatabaseName = "shawdb";
+    private static string InvalidVersionError = "Invalid version";
+    private static int CurrentDatabaseVersion = 6;
+    private static bool DatabaseLoaded = false;
+    private static object LockDatabaseLoaded = new object();
 
     private static string CreateMySqlConnectionString(string username, string password)
     {
@@ -60,10 +64,17 @@ public static class DbConnectionFactory
 
     private static void SetupDatabase(string username, string password)
     {
-        string connectionString = CreateMySqlConnectionString(username, password, "sys"); 
-        using(AutoDbConnection conn = new AutoDbConnection(new MySqlConnection(connectionString))) 
+        lock(LockDatabaseLoaded)
         {
-            FileStream initFileStream = File.Open("./SqlFiles/initDatabase.sql", FileMode.Open);
+            if(DatabaseLoaded)
+            {
+                return;
+            }
+
+            // Create database
+            string connectionString = CreateMySqlConnectionString(username, password, "sys"); 
+            using(AutoDbConnection conn = new AutoDbConnection(new MySqlConnection(connectionString))) 
+            using(FileStream initFileStream = File.Open("./SqlFiles/initDatabase.sql", FileMode.Open))
             using(StreamReader reader = new StreamReader(initFileStream))
             {
                 string? sqlCommand;
@@ -76,10 +87,57 @@ public static class DbConnectionFactory
                     }
                 }
             }
+
+            // Write current version to file
+            using(FileStream versionFileStream = File.Open("./SqlFiles/database.version", FileMode.Create))
+            {
+                versionFileStream.Write(
+                    Encoding.ASCII.GetBytes(CurrentDatabaseVersion.ToString())
+                );
+            }
+
+            DatabaseLoaded = true;
         }
     }
 
-    private static AutoDbConnection TryCreateDbConnection(IHostEnvironment env, bool firstTime)
+    private static void DeleteExistingDatabase(IHostEnvironment env, string username, string password)
+    {
+        string connectionString = CreateMySqlConnectionString(username, password, "sys");
+        using(AutoDbConnection conn = new AutoDbConnection(new MySqlConnection(connectionString)))
+        {
+            conn.Execute($"DROP DATABASE {DatabaseName};");
+        }
+    }
+
+    private static AutoDbConnection GetCurrentVersionConnection(IHostEnvironment env, string username, string password)
+    {
+        string connectionString = CreateMySqlConnectionString(username, password);
+        AutoDbConnection conn = new AutoDbConnection(new MySqlConnection(connectionString));
+
+        try
+        {
+            using(FileStream versionFileStream = File.Open("./SqlFiles/database.version", FileMode.Open))
+            using(StreamReader reader = new StreamReader(versionFileStream))
+            {
+                string fileStr = reader.ReadToEnd();
+                int storedVersion = int.Parse(fileStr);
+
+                if(storedVersion != CurrentDatabaseVersion)
+                {
+                    throw new Exception();
+                }
+
+                return conn;
+            }
+        }
+        catch
+        {
+            DeleteExistingDatabase(env, username, password);
+            throw new Exception(InvalidVersionError);
+        }
+    }
+
+    private static AutoDbConnection TryCreateDbConnection(IHostEnvironment env, bool firstTime = true)
     {
         string? username = JsonHelper.GetJsonSecret("DatabaseUsername");
         string? password = JsonHelper.GetJsonSecret("DatabasePassword");
@@ -90,11 +148,13 @@ public static class DbConnectionFactory
         }
 
         AutoDbConnection? connection;
-        string connectionString = CreateMySqlConnectionString(username, password);
-        try {
-            connection = new AutoDbConnection(new MySqlConnection(connectionString));
-        } catch(Exception e) {
-            if(e.Message.Contains($"Unknown database '{DatabaseName}'"))
+        try 
+        {
+            connection = GetCurrentVersionConnection(env, username, password);
+        } 
+        catch(Exception e)
+        {
+            if(e.Message.Contains($"Unknown database '{DatabaseName}'") || e.Message.Equals(InvalidVersionError))
             {
                 SetupDatabase(username, password);
             } else if(e.Message.Contains("Authentication")) {
@@ -114,6 +174,6 @@ public static class DbConnectionFactory
 
     public static AutoDbConnection CreateDbConnection(IHostEnvironment env)
     {
-        return TryCreateDbConnection(env, true);
+        return TryCreateDbConnection(env);
     }
 }

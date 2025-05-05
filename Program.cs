@@ -15,7 +15,6 @@ DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
 defaultFilesOptions.DefaultFileNames.Clear();
 defaultFilesOptions.DefaultFileNames.Add("index.html");
 app.UseDefaultFiles(defaultFilesOptions);
-
 app.UseStaticFiles();
 
 app.MapControllers();
