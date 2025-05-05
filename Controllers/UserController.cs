@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SHAW.Controllers.Util;
+using SHAW.DataAccess.Controllers;
 using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 using StarFederation.Datastar.DependencyInjection;
@@ -79,14 +80,18 @@ public class UserController : ControllerBase
                     new LoginModel() { Username = user.username, Password = user.password }
                 );
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
                 await _sse.MergeSignalsAsync("{valid: 'fail'}");
                 return;
             }
 
-            await _sse.MergeSignalsAsync($"{{valid: '{loginKey ?? "invalid"}'}}");
+            if(loginKey == null)
+            {
+                await _sse.MergeSignalsAsync("{valid: 'invalid'}");
+            } else {
+                await MorphSuccessAndRedirect("/home?token=" + loginKey);
+            }
         }
     }
 
@@ -116,13 +121,19 @@ public class UserController : ControllerBase
                     }
                 );
             }
-            catch(Exception e)
+            catch(UsernameExistsException)
             {
-                Console.WriteLine(e);
+                await _sse.MergeSignalsAsync("{r_error: '* Username already exists'}");
+                return;
+            }
+            catch
+            {
                 await _sse.MergeSignalsAsync("{r_error: '* Failed to create user'}");
                 return;
             }
         }
+
+        await MorphSuccessAndRedirect("/");
     }
 
     public class LoginSignalModel

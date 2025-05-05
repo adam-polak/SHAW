@@ -1,9 +1,15 @@
 using System.Data.Common;
+using System.Security.Cryptography;
 using Dapper;
 using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 
 namespace SHAW.DataAccess.Controllers;
+
+public class UsernameExistsException : Exception
+{
+    // Empty
+}
 
 public class UserController : AutoDbConnection
 {
@@ -19,9 +25,28 @@ public class UserController : AutoDbConnection
     {
         string sql = "SELECT loginkey FROM users"
                     + " WHERE username = @Username AND password = @Password;";
-        string? loginKey = (await _connection.QueryAsync<string>(sql, login))
-            .ToList()
-            .FirstOrDefault();
+        string? loginKey;
+        try 
+        {
+            loginKey = (await _connection.QueryAsync<string>(sql, login))
+                .ToList()
+                .First()
+                ?? ""; 
+        }
+        catch
+        {
+            return null;
+        }
+
+        if(loginKey.Length == 0)
+        {
+            // Generate a login key
+            loginKey = LoginKey.Create();
+            sql = "UPDATE users SET loginkey = @Key"
+                + " WHERE username = @Username AND password = @Password";
+            object obj = new { Key = loginKey, Username = login.Username, Password = login.Password };
+            await _connection.ExecuteAsync(sql, obj);
+        }
 
         return loginKey;    
     }
@@ -35,6 +60,34 @@ public class UserController : AutoDbConnection
     {
         string sql = "INSERT INTO users (username, password, roleid)"
                     + " VALUES (@Username, @Password, @Role);";
-        await _connection.ExecuteAsync(sql, user);
+        try
+        {
+            await _connection.ExecuteAsync(sql, user);
+        }
+        catch
+        {
+            throw new UsernameExistsException();
+        }
+    }
+}
+
+public static class LoginKey
+{
+    public static string Create()
+    {
+        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+        {
+            byte[] bytes = new byte[32];
+            rng.GetBytes(bytes);
+            return Base64UrlEncode(bytes);
+        }
+    }
+
+    private static string Base64UrlEncode(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes)
+                      .TrimEnd('=')
+                      .Replace('+', '-')
+                      .Replace('/', '_');
     }
 }
