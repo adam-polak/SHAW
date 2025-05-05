@@ -52,6 +52,20 @@ public class UserController : AutoDbConnection
     }
 
     /// <summary>
+    /// Try to get the user from with the provided login key. Throws an error if the
+    /// login key is invalid.
+    /// </summary>
+    /// <param name="loginKey"></param>
+    /// <returns>User associated with the login key</returns>
+    public async Task<UserModel> TryGetUser(string loginKey)
+    {
+        string sql = "SELECT id, username, roleid FROM users"
+                    + " WHERE loginkey = @Key";
+        object obj = new { Key = loginKey };
+        return (await _connection.QueryAsync<UserModel>(sql, obj)).First();
+    }
+
+    /// <summary>
     /// Try to create a user with the given Username and Password
     /// </summary>
     /// <param name="user">The LoginModel to create a user based off</param>
