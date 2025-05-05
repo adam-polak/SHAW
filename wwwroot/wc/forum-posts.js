@@ -1,3 +1,26 @@
+/**
+ * ForumPosts Web Component
+ * 
+ * @description Displays a list of forum posts that users can click to select
+ * 
+ * @property {string} title - Optional title to display at the top of the posts container
+ * @property {string} posts - JSON string of posts array with the following structure:
+ * 
+ * Expected JSON Schema for posts:
+ * [
+ *   {
+ *     "id": number,          // Unique identifier for the post
+ *     "title": string,       // Post title to display
+ *     "author": string,      // Username of post author
+ *     "date": string,        // Date of post (optional, default "Just now")
+ *     "body": string         // Content of the post (not displayed in the list view)
+ *   },
+ *   ...
+ * ]
+ * 
+ * @fires post-selected - Custom event when user clicks on a post
+ * @property {Object} event.detail.value - The selected post object
+ */
 class ForumPosts extends HTMLElement {
     constructor() {
         super();
