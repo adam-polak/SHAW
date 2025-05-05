@@ -1,9 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using StarFederation.Datastar.DependencyInjection;
-using EnvironmentName = Microsoft.AspNetCore.Hosting.EnvironmentName;
-using SHAW.Controllers.Util;
-using SHAW.DataAccess.Controllers;
-using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 
 namespace SHAW.Controllers;
@@ -24,7 +19,7 @@ public class HomeController : ControllerBase
     [HttpGet("")]
     public async Task<IActionResult> HomePage(string key)
     {
-        if (!string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
+        if (string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
         using (var c = CreateUserDbController())
         {
             var isValid = await c.ValidateLoginKey(key);

@@ -34,6 +34,48 @@ CREATE TABLE responses (
     CreatedOn DATE,
     UserId INTEGER,
     PostId INTEGER,
+    ParentResponseId INTEGER,
+    FOREIGN KEY (UserId) REFERENCES users(id),
+    FOREIGN KEY (PostId) REFERENCES posts(id),
+    FOREIGN KEY (ParentResponseId) REFERENCES responses(id)
+);
+
+CREATE TABLE post_interactions (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Vote BOOLEAN,
+    UserId INTEGER,
+    PostId INTEGER,
+    UNIQUE (UserId, PostId),
     FOREIGN KEY (UserId) REFERENCES users(id),
     FOREIGN KEY (PostId) REFERENCES posts(id)
+);
+
+CREATE TABLE responses_interactions (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Vote BOOLEAN,
+    UserId INTEGER,
+    ResponseId INTEGER,
+    UNIQUE (UserId, ResponseId),
+    FOREIGN KEY (UserId) REFERENCES users(id),
+    FOREIGN KEY (ResponseId) REFERENCES responses(id)
+);
+
+CREATE TABLE private_message_room (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    UserOne INTEGER,
+    UserTwo INTEGER,
+    CHECK (UserOne < UserTwo),
+    UNIQUE(UserOne, UserTwo),
+    FOREIGN KEY (UserOne) REFERENCES users(id),
+    FOREIGN KEY (UserTwo) REFERENCES users(id)
+);
+
+CREATE TABLE private_messages (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Content VARCHAR(1000),
+    UserId INTEGER,
+    RoomId INTEGER,
+    CreatedOn DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserId) REFERENCES users(id),
+    FOREIGN KEY (RoomId) REFERENCES private_message_room(id)
 );

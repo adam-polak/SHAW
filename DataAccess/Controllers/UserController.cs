@@ -104,8 +104,6 @@ public class UserController : AutoDbConnection
         }
         return count > 0;
     }
-
-
 }
 
 public static class LoginKey
