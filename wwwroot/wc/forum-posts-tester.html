@@ -16,9 +16,7 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="text-center mb-4">Forum Posts Component Test</h1>
-    <div data-signals="{
+<div data-signals="{
     posts: [
         {
             id: 1,
@@ -42,11 +40,14 @@
             body: 'Looking for study partners for Physics 101...'
         }
     ],
-    selected: null}">
+    selected: null}"
+     class="container">
+    <h1 class="text-center mb-4">Forum Posts Component Test</h1>
+    <div>
         <forum-posts
-            title="Health"
-            data-attr-posts='$posts'
-            data-on-post-selected='$selected = JSON.stringify(evt.detail.value, null, 2)'>
+                title="Health"
+                data-attr-posts='$posts'
+                data-on-post-selected='$selected = JSON.stringify(evt.detail.value, null, 2)'>
         </forum-posts>
         <pre data-text="$selected"></pre>
 
