@@ -1,25 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using StarFederation.Datastar.DependencyInjection;
 using EnvironmentName = Microsoft.AspNetCore.Hosting.EnvironmentName;
+
 namespace SHAW.Controllers;
 
 [Route("home")]
 public class HomeController : ControllerBase
 {
-    
-    private IDatastarServerSentEventService _sse;
-    private IDatastarSignalsReaderService _reader;
     private IHostEnvironment _env;
 
     public HomeController(
-        IHostEnvironment env,
-        IDatastarServerSentEventService sse,
-        IDatastarSignalsReaderService reader
+        IHostEnvironment env
     )
     {
         _env = env;
-        _sse = sse;
-        _reader = reader;
     }
 
     [HttpGet("")]
@@ -37,5 +31,4 @@ public class HomeController : ControllerBase
             "text/html"
         );
     }
-    
 }
