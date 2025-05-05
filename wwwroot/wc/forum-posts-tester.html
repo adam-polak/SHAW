@@ -10,13 +10,17 @@
     <script src="forum-posts.js" type="module"></script>
     <style>
         body {
-            background-color: #f5f5f5;
+            background-color: #bb2d3b;
             padding: 20px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding-top: 50px;
         }
     </style>
 </head>
 <body>
-<div data-signals="{
+<div data-signals="{ <!-- Will be sent from the server -->
     posts: [
         {
             id: 1,
@@ -43,9 +47,11 @@
     selected: null}"
      class="container">
     <h1 class="text-center mb-4">Forum Posts Component Test</h1>
+    <span>Optional Title Value: </span><input class="align-self-center" data-bind-title value="" type="text"/>
+    <br>
     <div>
         <forum-posts
-                title="Health"
+                data-attr-title="$title"
                 data-attr-posts='$posts'
                 data-on-post-selected='$selected = JSON.stringify(evt.detail.value, null, 2)'>
         </forum-posts>

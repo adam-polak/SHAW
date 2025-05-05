@@ -8,7 +8,7 @@ class ForumPosts extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['posts', 'selected-post'];
+        return ['posts', 'title'];
     }
 
     connectedCallback() {
@@ -42,15 +42,32 @@ class ForumPosts extends HTMLElement {
             } catch (e) {
                 console.error('Failed to parse posts attribute:', e);
             }
+        } else if (name === 'title') {
+            this._render();
         }
     }
-
+    
     _getStyles() {
         return `
             <style>
                 /* Import Bootstrap CSS into shadow DOM */
                 @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css");
-
+                
+                .posts-container {
+                    border: 1px solid #dee2e6;
+                    border-radius: 0.5rem;
+                    padding: 1rem;
+                    background-color: white;
+                }
+                
+                .container-title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    margin-bottom: 1rem;
+                    padding-bottom: 0.5rem;
+                    border-bottom: 1px solid #dee2e6;
+                }
+    
                 .post-item {
                     background-color: #f8f9fa;
                     border-radius: 0.75rem;
@@ -60,17 +77,17 @@ class ForumPosts extends HTMLElement {
                     cursor: pointer;
                     transition: all 0.2s ease;
                 }
-
+    
                 .post-item:hover {
                     transform: translateY(-2px);
                     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 }
-
+    
                 .post-title {
                     font-weight: 600;
                     margin-bottom: 0.5rem;
                 }
-
+    
                 .post-meta {
                     display: flex;
                     justify-content: space-between;
@@ -80,12 +97,12 @@ class ForumPosts extends HTMLElement {
             </style>
         `;
     }
-
+    
     _getPostsHtml() {
         if (!this._posts || this._posts.length === 0) {
             return '<div class="text-center text-muted py-4">No posts available</div>';
         }
-
+    
         return this._posts.map(post => `
             <div class="post-item" data-id="${post.id}">
                 <div class="post-title">${post.title}</div>
@@ -96,11 +113,15 @@ class ForumPosts extends HTMLElement {
             </div>
         `).join('');
     }
-
+    
     _render() {
+        const title = this.getAttribute('title');
+        const titleHtml = title ? `<div class="container-title">${title}</div>` : '';
+        
         this.shadowRoot.innerHTML = `
             ${this._getStyles()}
             <div class="posts-container">
+                ${titleHtml}
                 ${this._getPostsHtml()}
             </div>
         `;
