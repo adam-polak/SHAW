@@ -9,7 +9,7 @@ public static class DbConnectionFactory
 {
     private static string DatabaseName = "shawdb";
     private static string InvalidVersionError = "Invalid version";
-    private static int CurrentDatabaseVersion = 5;
+    private static int CurrentDatabaseVersion = 6;
     private static bool DatabaseLoaded = false;
     private static object LockDatabaseLoaded = new object();
 

@@ -79,3 +79,36 @@ CREATE TABLE private_messages (
     FOREIGN KEY (UserId) REFERENCES users(id),
     FOREIGN KEY (RoomId) REFERENCES private_message_room(id)
 );
+
+CREATE TABLE categories (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE post_categories (
+    PostId INTEGER,
+    CategoryId INTEGER,
+    PRIMARY KEY (PostId, CategoryId),
+    FOREIGN KEY (PostId) REFERENCES posts(Id),
+    FOREIGN KEY (CategoryId) REFERENCES categories(Id)
+);
+
+CREATE TABLE tags (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE post_tags (
+    PostId INTEGER,
+    TagId INTEGER,
+    PRIMARY KEY (PostId, TagId),
+    FOREIGN KEY (PostId) REFERENCES posts(Id),
+    FOREIGN KEY (TagId) REFERENCES tags(Id)
+);
+
+CREATE TABLE user_profiles (
+    UserId INTEGER PRIMARY KEY,
+    Bio TEXT,
+    ProfilePicture VARCHAR(255),
+    FOREIGN KEY (UserId) REFERENCES users(Id)
+);
