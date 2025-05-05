@@ -11,28 +11,16 @@ public class HomeController : ControllerBase
     private IDatastarSignalsReaderService _reader;
     private IHostEnvironment _env;
 
-    public HomeController(IDatastarServerSentEventService sse, IDatastarSignalsReaderService reader,
+    public HomeController(
         IHostEnvironment env)
     {
-        _sse = sse;
-        _reader = reader;
         _env = env;
     }
     [HttpGet("")]
     public async Task<IActionResult> HomePage(string token)
     {
-        // TODO: @Adam
-        Func<string, bool> validate = delegate(string token)
-        {
-            if (token == "")
-            {
-                return false;
-            }
-
-            return true;
-        };
-
-        if (!validate(token))
+        bool Validate(string token) => !string.IsNullOrEmpty(token);
+        if (!Validate(token))
         {
             return Unauthorized("Bad token.");
         }
