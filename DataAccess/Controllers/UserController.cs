@@ -69,6 +69,26 @@ public class UserController : AutoDbConnection
             throw new UsernameExistsException();
         }
     }
+    
+    /// <summary>
+    /// Try to validate a login-key for a user
+    /// </summary>
+    /// <param name="loginKey">The LoginKey provided when you log in</param>
+    public async Task<bool> ValidateLoginKey(string key)
+    {
+        string sql = "SELECT COUNT(*) FROM users WHERE LoginKey = @Key";
+        try
+        {
+            var count = await _connection.QuerySingleAsync<int>(sql, key);
+            return count > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+
 }
 
 public static class LoginKey
