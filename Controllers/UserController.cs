@@ -244,7 +244,7 @@ public class UserController : ControllerBase
         // Render Big Checkmark and "Redirecting..."
         await _sse.MergeFragmentsAsync($@"
             <main id='morph'>
-               <div data-signals-login-key='{ loginKey }' data-persist='loginKey' class='display-1 text-center text-success mb-3'>
+               <div data-signals=""{{ loginKey: '{loginKey}' }}"" data-persist='loginKey' class='display-1 text-center text-success mb-3'>
                     <i class='bi bi-check-circle-fill'></i>
                 </div> 
                 <h4 class='text-center mb-4'>Redirecting...</h4>
