@@ -51,6 +51,14 @@ public class UserController : AutoDbConnection
         return loginKey;    
     }
 
+    public async Task<UserModel> GetUser(string loginKey)
+    {
+        string sql = "SELECT id, username, roleid FROM users"
+                    + " WHERE loginkey = @Key";
+        object obj = new { Key = loginKey };
+        return (await _connection.QueryAsync<UserModel>(sql, obj)).First();
+    }
+
     /// <summary>
     /// Try to create a user with the given Username and Password
     /// </summary>
