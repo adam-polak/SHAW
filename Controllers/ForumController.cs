@@ -3,21 +3,21 @@ using SHAW.DataAccess.Util;
 
 namespace SHAW.Controllers;
 
-[Route("home")]
-public class HomeController : ControllerBase
+[Route("forum")]
+public class ForumController : ControllerBase
 {
     private IHostEnvironment _env;
 
     private DataAccess.Controllers.UserController CreateUserDbController() =>
         new DataAccess.Controllers.UserController(DbConnectionFactory.CreateDbConnection(_env));
 
-    public HomeController(IHostEnvironment env)
+    public ForumController(IHostEnvironment env)
     {
         _env = env;
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> HomePage()
+    public async Task<IActionResult> ForumPage()
     {
         var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
         if (!cookieExists || string.IsNullOrEmpty(key))
@@ -32,7 +32,7 @@ public class HomeController : ControllerBase
             return isValid switch
             {
                 true => PhysicalFile(
-                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "home.html"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "forum.html"),
                     "text/html"),
                 false => BadRequest("Invalid login key"),
                 null => BadRequest("Server error")

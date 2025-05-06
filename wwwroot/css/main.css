@@ -1,5 +1,7 @@
+/* Login page specific styles */
+
 body {
-    background: linear-gradient(to right, #64b4ca, #a5f6b5);
+    background: var(--main-gradient);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -10,7 +12,7 @@ body {
     background: #ffffff;
     padding: 2rem;
     border-radius: 1rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow-lg);
     width: 100%;
     max-width: 400px;
 }
@@ -18,16 +20,17 @@ body {
 .login-card .logo {
     font-weight: bold;
     font-size: 2rem;
-    background: linear-gradient(45deg, #f65353, #ef5289);
+    background: linear-gradient(45deg, var(--primary-gradient-start), var(--primary-purple));
     color: white;
     padding: 0.5rem;
     border-radius: 0.5rem;
     text-align: center;
     margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .form-control {
-    border: 1px solid #ced4da;
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
 
@@ -37,18 +40,18 @@ body {
 }
 
 .btn-primary {
-    background-color: #6c5ce7;
-    border-color: #6c5ce7;
+    background-color: var(--primary-purple);
+    border-color: var(--primary-purple);
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: #5e4db2;
-    border-color: #5e4db2;
+    background-color: var(--primary-purple-hover);
+    border-color: var(--primary-purple-hover);
 }
 
 .text-center a {
-    color: #6c5ce7;
+    color: var(--primary-purple);
     font-weight: 500;
 }
 
@@ -58,4 +61,14 @@ body {
 
 #error-message {
     display: block;
+}
+
+/* Styles for the success and redirect screens */
+.display-1.text-center.text-success {
+    margin-top: 1rem;
+}
+
+/* Ensure text is readable in the login card during redirect */
+.login-card h4 {
+    color: #333;
 }

@@ -1,0 +1,48 @@
+/* Forum page specific styles */
+
+/* Main content area */
+.forum-content {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: var(--box-shadow-md);
+}
+
+/* Posts styling */
+.post-item {
+    background-color: var(--light-gray);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-purple);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.post-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-sm);
+}
+
+.post-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--primary-purple);
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Forum guidelines card */
+.guidelines-card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow-md);
+    border-left: 4px solid var(--accent-yellow);
+}
