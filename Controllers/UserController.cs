@@ -90,7 +90,7 @@ public class UserController : ControllerBase
             {
                 await _sse.MergeSignalsAsync("{valid: 'invalid'}");
             } else {
-                await MorphSuccessAndRedirect("/home?key=" + loginKey, loginKey:loginKey);
+                await MorphSuccessAndRedirect("/home", loginKey:loginKey);
             }
         }
     }
