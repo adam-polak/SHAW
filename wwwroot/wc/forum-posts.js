@@ -75,7 +75,7 @@ class ForumPosts extends HTMLElement {
             <style>
                 /* Import Bootstrap CSS into shadow DOM */
                 @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css");
-                    @import url("/css/base.css");
+                @import url("/css/base.css");
                     
                     .posts-container {
                         border: 1px solid var(--border-color);
