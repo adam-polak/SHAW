@@ -239,12 +239,14 @@ public class UserController : ControllerBase
         }
     }
 
-    public async Task MorphSuccessAndRedirect(string url, int timeout = 1000, string loginKey = "")
+    public async Task MorphSuccessAndRedirect(string url, int timeout = 500, string loginKey = "")
     {
+        var cookiePartial = (!string.IsNullOrEmpty(loginKey)) ? $@" data-on-load=""document.cookie = 'loginKey={loginKey}; SameSite=Strict; Path=/; '""" : "";
         // Render Big Checkmark and "Redirecting..."
         await _sse.MergeFragmentsAsync($@"
             <main id='morph'>
-               <div data-signals=""{{ loginKey: '{loginKey}' }}"" data-persist='loginKey' class='display-1 text-center text-success mb-3'>
+               <div " + cookiePartial + $@"
+                    class='display-1 text-center text-success mb-3'>
                     <i class='bi bi-check-circle-fill'></i>
                 </div> 
                 <h4 class='text-center mb-4'>Redirecting...</h4>

@@ -17,9 +17,15 @@ public class HomeController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> HomePage(string key)
+    public async Task<IActionResult> HomePage()
     {
-        if (string.IsNullOrEmpty(key)) return BadRequest("Key is required for this page");
+        var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
+        if (!cookieExists || string.IsNullOrEmpty(key))
+        {
+            return Redirect("index.html");
+        }
+        
+
         using (var c = CreateUserDbController())
         {
             var isValid = await c.ValidateLoginKey(key);
