@@ -75,40 +75,42 @@ class ForumPosts extends HTMLElement {
             <style>
                 /* Import Bootstrap CSS into shadow DOM */
                 @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css");
-                
-                .posts-container {
-                    border: 1px solid #dee2e6;
-                    border-radius: 0.5rem;
-                    padding: 1rem;
-                    background-color: white;
-                }
-                
-                .container-title {
-                    font-size: 1.25rem;
-                    font-weight: 600;
-                    margin-bottom: 1rem;
-                    padding-bottom: 0.5rem;
-                    border-bottom: 1px solid #dee2e6;
-                }
-    
-                .post-item {
-                    background-color: #f8f9fa;
-                    border-radius: 0.75rem;
-                    padding: 1rem;
-                    margin-bottom: 1rem;
-                    border-left: 4px solid #6c5ce7;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                }
-    
-                .post-item:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                }
-    
-                .post-title {
-                    font-weight: 600;
-                    margin-bottom: 0.5rem;
+                    @import url("/css/base.css");
+                    
+                    .posts-container {
+                        border: 1px solid var(--border-color);
+                        border-radius: 0.5rem;
+                        padding: 1rem;
+                        background-color: white;
+                    }
+                    
+                    .container-title {
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        margin-bottom: 1rem;
+                        padding-bottom: 0.5rem;
+                        border-bottom: 1px solid var(--border-color);
+                    }
+        
+                    .post-item {
+                        background-color: var(--light-gray);
+                        border-radius: 0.75rem;
+                        padding: 1rem;
+                        margin-bottom: 1rem;
+                        border-left: 4px solid var(--primary-purple);
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                    }
+        
+                    .post-item:hover {
+                        transform: translateY(-2px);
+                        box-shadow: var(--box-shadow-sm);
+                    }
+        
+                    .post-title {
+                        font-weight: 600;
+                        margin-bottom: 0.5rem;
+                        color: var(--primary-purple);
                 }
     
                 .post-meta {

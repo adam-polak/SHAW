@@ -156,7 +156,7 @@ public class UserController : ControllerBase
         public static string loginTemplate(LoginSignalModel login)
         {
             return $@"
-    <main id=""morph"">
+            <main id=""morph"" class=""login-main"">
     <div
       data-signals=""{{username: '{login.username}', password: '{login.password}', valid: '{login.valid}'}}""
       data-computed-error=""$valid == 'invalid' ? '* Invalid username or password' :
@@ -192,7 +192,7 @@ public class UserController : ControllerBase
         public static string registerTemplate(RegisterSignalModel register)
         {
             return $@"
-        <main id=""morph"">
+        <main id=""morph"" class=""login-main"">
         <div data-signals=""{{r_account_type: '{register.r_account_type}', r_username: '{register.r_username}', r_password: '{register.r_password}', r_error: '{register.r_error}'}}"">
             <h4 class=""text-center mb-4"">Register</h4>
             <label class=""text-center mb-2"">Account Type</label>
@@ -244,7 +244,7 @@ public class UserController : ControllerBase
         var cookiePartial = (!string.IsNullOrEmpty(loginKey)) ? $@" data-on-load=""document.cookie = 'loginKey={loginKey}; SameSite=Strict; Path=/; '""" : "";
         // Render Big Checkmark and "Redirecting..."
         await _sse.MergeFragmentsAsync($@"
-            <main id='morph'>
+            <main id='morph' class='login-main'>
                <div " + cookiePartial + $@"
                     class='display-1 text-center text-success mb-3'>
                     <i class='bi bi-check-circle-fill'></i>

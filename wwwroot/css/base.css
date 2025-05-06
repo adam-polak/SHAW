@@ -1,0 +1,120 @@
+/* Base CSS with Shared Variables and Styles */
+:root {
+    /* Color Variables */
+    --primary-gradient-start: #64b4ca;
+    --primary-gradient-end: #a5f6b5;
+    --primary-purple: #6c5ce7;
+    --primary-purple-hover: #5e4db2;
+    --accent-yellow: #FFD700;
+    --footer-bg: #343a40;
+    --light-gray: #f8f9fa;
+    --border-color: #dee2e6;
+    
+    /* Common Gradients */
+    --main-gradient: linear-gradient(to right, var(--primary-gradient-start), var(--primary-gradient-end));
+    
+    /* Shadow Variables */
+    --box-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --box-shadow-md: 0 5px 15px rgba(0, 0, 0, 0.05);
+    --box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Body Structure */
+body:not(.login-body) {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+main:not(.login-main) {
+    flex: 1 0 auto;
+    background: var(--main-gradient);
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: var(--box-shadow-sm);
+}
+
+.navbar-nav .nav-link {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand {
+    width: auto;
+    margin-bottom: 0;
+}
+
+.nav-icon {
+    margin-right: 2px;
+}
+
+.login-container {
+    margin-left: 1rem;
+}
+
+/* UWM Branding */
+.uwm-nav {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent-yellow);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+.shaw-nav {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--footer-bg);
+    color: white;
+    padding: 40px 0;
+    flex-shrink: 0;
+}
+
+/* Button styles */
+.btn-custom {
+    background-color: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 3px rgba(225, 225, 225, 0.5);
+    border-radius: 0.5rem;
+}
+
+.btn-custom:hover {
+    background-color: var(--primary-purple-hover);
+    border-color: var(--primary-purple-hover);
+    color: white;
+}
+
+/* Common box styles */
+.card, .feature-box {
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow-md);
+    transition: all 0.3s ease;
+}
+
+.card:hover, .feature-box:hover {
+    box-shadow: var(--box-shadow-lg);
+}
+
+/* Styles for login flow success and redirecting pages */
+.login-main {
+    background: transparent !important;
+}
+
+/* Success checkmark styling */
+.login-main .bi-check-circle-fill {
+    color: var(--primary-purple) !important;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.1));
+}
