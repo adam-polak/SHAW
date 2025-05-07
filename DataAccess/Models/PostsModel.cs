@@ -7,4 +7,5 @@ public class PostsModel
     public string Body { get; set; }
     public DateTime CreatedOn { get; set; }
     public string Author { get; set; }
+    public int UserId { get; set; }
 }

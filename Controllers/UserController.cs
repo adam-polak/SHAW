@@ -145,9 +145,9 @@ public class UserController : ControllerBase
                 await _sse.MergeSignalsAsync("{r_error: '* Username already exists'}");
                 return;
             }
-            catch
+            catch(Exception e) 
             {
-                await _sse.MergeSignalsAsync("{r_error: '* Failed to create user'}");
+                await _sse.MergeSignalsAsync($"{{r_error: '* { e.Message }'}}");
                 return;
             }
         }
