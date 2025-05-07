@@ -80,59 +80,36 @@
     </div>
 </nav>
 
-<main>
-<!-- Forum Content -->
-<div class="container my-5" data-signals="{
-    posts: [
-        {
-            id: 1,
-            title: 'Mental Health Resources on Campus',
-            author: 'wellness_advisor',
-            date: '2024-03-15',
-            body: 'Looking for mental health resources? Here are some available services...'
-        },
-        {
-            id: 2,
-            title: 'Weekly Meditation Sessions',
-            author: 'mindfulness_guide',
-            date: '2024-03-14',
-            body: 'Join us for guided meditation sessions every Wednesday...'
-        },
-        {
-            id: 3,
-            title: 'Stress Management Workshop',
-            author: 'health_counselor',
-            date: '2024-03-13',
-            body: 'Learn effective stress management techniques in our upcoming workshop...'
-        }
-    ],
-    selected: null
-}">
-    <div class="row">
-        <div class="col-md-8">
-            <h1 class="mb-4">Community Forum</h1>
-            <forum-posts
-                title="Recent Posts"
-                data-attr-posts='$posts'
-                data-on-post-selected='$selected = evt.detail.value && null'> <!-- replace null with the @get to the page of the selected post --> 
-            </forum-posts>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Forum Guidelines</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">✓ Be respectful and supportive</li>
-                        <li class="mb-2">✓ Maintain confidentiality</li>
-                        <li class="mb-2">✓ Share reliable information</li>
-                        <li class="mb-2">✓ Report inappropriate content</li>
-                    </ul>
+<main id="morph">
+    <div id="post-view">
+    <!-- Forum Content -->
+    <div class="container my-5" data-signals="{
+        posts: [],
+        selected: null
+    }">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="mb-4">Community Forum</h1>
+                <div id="posts" data-on-load="@get('forum/posts')">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Forum Guidelines</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">✓ Be respectful and supportive</li>
+                            <li class="mb-2">✓ Maintain confidentiality</li>
+                            <li class="mb-2">✓ Share reliable information</li>
+                            <li class="mb-2">✓ Report inappropriate content</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-    </main>
+    </div>
+</main>
 
 <!-- Footer -->
 <footer class="footer">
