@@ -20,6 +20,8 @@ public class PostViewSignalModel
 {
     public required List<PostSignalModel> posts { get; set; }
     public required PostSignalModel selected { get; set; }
+    
+    public required bool isCounselor { get; set; }
 }
 
 internal static class Templates 
