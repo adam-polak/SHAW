@@ -49,6 +49,25 @@ public class UserController : ControllerBase
         await _sse.MergeFragmentsAsync(Templates.registerTemplate(model));
     }
 
+    [HttpGet("isCounselor")]
+    public async Task IsCounselor()
+    {
+        var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
+        if (!cookieExists || string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+        var controller = new DataAccess.Controllers.UserController(
+            DbConnectionFactory.CreateDbConnection(_env)
+        );
+        var isCounselor = await controller.IsCounselor(key);
+        string isCounselorString = isCounselor ? "true" : "false";
+        await _sse.MergeSignalsAsync("{isCounselor: " + isCounselorString + "}");
+
+
+        
+    }
+
     private DataAccess.Controllers.UserController CreateUserDbController()
     {
         return new DataAccess.Controllers.UserController(
@@ -126,9 +145,9 @@ public class UserController : ControllerBase
                 await _sse.MergeSignalsAsync("{r_error: '* Username already exists'}");
                 return;
             }
-            catch
+            catch(Exception e) 
             {
-                await _sse.MergeSignalsAsync("{r_error: '* Failed to create user'}");
+                await _sse.MergeSignalsAsync($"{{r_error: '* { e.Message }'}}");
                 return;
             }
         }

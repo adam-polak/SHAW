@@ -20,49 +20,8 @@ public class PostViewSignalModel
 {
     public required List<PostSignalModel> posts { get; set; }
     public required PostSignalModel selected { get; set; }
-}
-
-internal static class Templates 
-{
-    internal static string ViewPostTemplate(PostSignalModel post)
-    {
-        return $@"
-    <main id=""morph"">
-        <div class=""container my-5"">
-            <div class=""row"">
-                <div class=""col-md-8"">
-                    <nav aria-label=""breadcrumb"">
-                        <ol class=""breadcrumb"">
-                            <li class=""breadcrumb-item""><a href=""#"" data-on-click=""@get('/forum')"">Forum</a></li>
-                            <li class=""breadcrumb-item active"" aria-current=""page"">{post.title}</li>
-                        </ol>
-                    </nav>
-                    <div class=""card"">
-                        <div class=""card-body"">
-                            <h1 class=""card-title"">{post.title}</h1>
-                            <div class=""text-muted mb-3"">
-                                Posted by {post.author} on {post.date}
-                            </div>
-                            <p class=""card-text"">{post.body}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class=""col-md-4"">
-                    <div class=""card"">
-                        <div class=""card-body"">
-                            <h5 class=""card-title"">Discussion Guidelines</h5>
-                            <ul class=""list-unstyled"">
-                                <li class=""mb-2"">✓ Be respectful and supportive</li>
-                                <li class=""mb-2"">✓ Stay on topic</li>
-                                <li class=""mb-2"">✓ Share constructive feedback</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>";
-    }
+    
+    public required bool isCounselor { get; set; }
 }
 
 
