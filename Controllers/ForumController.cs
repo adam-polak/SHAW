@@ -14,6 +14,8 @@ public class PostSignalModel
     public required string author { get; set; }
     public required string date { get; set; }
     public required string body { get; set; }
+    public int likes { get; set; }
+    public int dislikes { get; set; }
 }
 
 public class PostViewSignalModel

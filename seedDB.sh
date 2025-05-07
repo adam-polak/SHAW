@@ -28,15 +28,15 @@ USE shawdb;
 
 -- Insert roles (only if they don't exist)
 INSERT IGNORE INTO roles (Id, Name) VALUES
-(1, 'student'),
-(2, 'counselor');
+(0, 'Student'),
+(1, 'Counselor');
 
 -- Insert sample users (only if they don't exist)
 INSERT IGNORE INTO users (Username, Password, RoleId) VALUES
-('student123', 'pass123', 1),
-('counselor1', 'pass123', 2),
-('student456', 'pass123', 1),
-('counselor2', 'pass123', 2);
+('student123', 'pass123', 0),
+('counselor1', 'pass123', 1),
+('student456', 'pass123', 0),
+('counselor2', 'pass123', 1);
 
 -- Insert sample posts
 INSERT INTO posts (UserId, Title, Body, CreatedOn) VALUES

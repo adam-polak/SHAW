@@ -20,11 +20,27 @@ public class PostController : AutoDbConnection
         try 
         {
             var posts = await _connection.QueryAsync<PostsModel>(sql);
+            foreach(var post in posts)
+            {
+                post.Likes = await TryGetLikes(post.Id);
+                post.Dislikes = await TryGetDislikes(post.Id);
+            }
+
             return posts.ToList();
         }
         catch
         {
             return new List<PostsModel>();
         }
+    }
+
+    public async Task<int> TryGetLikes(int postId)
+    {
+        return 0;
+    }
+
+    public async Task<int> TryGetDislikes(int postId)
+    {
+        return 0;
     }
 }
