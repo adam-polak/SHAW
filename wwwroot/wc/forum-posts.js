@@ -60,10 +60,12 @@ class ForumPosts extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'posts' && newValue) {
             try {
+                console.log('Posts attribute changed:', newValue);
                 this._posts = JSON.parse(newValue);
+                console.log('Parsed posts:', this._posts);
                 this._render();
             } catch (e) {
-                console.error('Failed to parse posts attribute:', e);
+                console.error('Failed to parse posts attribute:', e, 'Raw value:', newValue);
             }
         } else if (name === 'title') {
             this._render();
