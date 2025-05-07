@@ -16,6 +16,12 @@ public class PostSignalModel
     public required string body { get; set; }
 }
 
+public class PostViewSignalModel
+{
+    public required List<PostSignalModel> posts { get; set; }
+    public required PostSignalModel selected { get; set; }
+}
+
 internal static class Templates 
 {
     internal static string ViewPostTemplate(PostSignalModel post)
