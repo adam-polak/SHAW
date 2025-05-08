@@ -93,10 +93,9 @@
             <div id="main-left" class="col-md-8" data-on-load="@get('forum/posts')" >
                 <div id="title-button-container"
                      class="d-flex justify-content-between align-items-center mb-4"
-                     data-on-load="@get('user/isCounselor')"
                 >
                     <h1 class="mb-4">Community Forum</h1>
-                    <button data-show="$isCounselor" class="btn btn-primary"
+                    <button  class="btn btn-primary"
                             data-on-click="@get('forum/posts/create')"
                     >
                         <i class="bi bi-plus-circle"></i>
