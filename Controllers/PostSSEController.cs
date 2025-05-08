@@ -237,6 +237,7 @@ public class PostSSEController : ControllerBase
                                 <div class=""text-muted mb-3"">
                                     Posted by {selected.author} on {selected.date}
                                 </div>
+                                <pre>{selected.body}</pre>
                                 <div 
                                     class=""mt-2 d-flex gap-2 align-items-center""
                                     data-signals=""{{interactError: '', likes: '{selected.likes}', dislikes: '{selected.dislikes}'}}""
