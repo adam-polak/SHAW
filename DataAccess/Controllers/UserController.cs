@@ -125,22 +125,28 @@ public class UserController : AutoDbConnection
         return role == RoleType.Counselor;
     }
 
-public async Task<int?> GetUserIdFromLoginKey(string loginKey)
-{
-    string sql = "SELECT id FROM users WHERE loginkey = @LoginKey";
-    
-    try
+    public async Task<bool> IsStudent(string loginKey)
     {
-        return await _connection.QueryFirstOrDefaultAsync<int?>(sql, new
+        var role = await GetUserRole(loginKey);
+        return role == RoleType.Student;
+    }
+
+    public async Task<int?> GetUserIdFromLoginKey(string loginKey)
+    {
+        string sql = "SELECT id FROM users WHERE loginkey = @LoginKey";
+        
+        try
         {
-            LoginKey = loginKey
-        });
+            return await _connection.QueryFirstOrDefaultAsync<int?>(sql, new
+            {
+                LoginKey = loginKey
+            });
+        }
+        catch
+        {
+            return null;
+        }
     }
-    catch
-    {
-        return null;
-    }
-}
 }
 
 public static class LoginKey

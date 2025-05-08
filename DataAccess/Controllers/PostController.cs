@@ -72,6 +72,26 @@ public class PostController : AutoDbConnection
         ).FirstOrDefault();
     }
 
+    public async Task<List<CommentModel>> GetComments(int postId)
+    {
+        string sql = "SELECT responses.id AS id, responses.CreatedOn as CreatedOn, responses.Content as Content, users.Username as Username"
+                    + " FROM responses"
+                    + " JOIN Users on responses.userid = users.id"
+                    + " WHERE responses.postid = @pid;";
+        return (await _connection.QueryAsync<CommentModel>(sql, new { pid = postId })).ToList();
+    }
+
+    public async Task AddComment(int postId, int userId, string comment)
+    {
+        string sql = "INSERT INTO responses (content, postid, userid)"
+                    + " VALUES (@c, @p, @u);";
+        await _connection.ExecuteAsync(sql, new {
+            c = comment,
+            p = postId,
+            u = userId
+        });
+    }
+
     /// <summary>
     /// Try to interact with the post
     /// </summary>

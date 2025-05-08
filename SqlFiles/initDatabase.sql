@@ -25,13 +25,13 @@ CREATE TABLE posts (
     FOREIGN KEY (UserId) REFERENCES users(Id),
     Title VARCHAR(100),
     Body VARCHAR(1000),
-    CreatedOn DATE
+    CreatedOn DATE DEFAULT (CURDATE())
 );
 
 CREATE TABLE responses (
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
     Content VARCHAR(1000),
-    CreatedOn DATE,
+    CreatedOn DATE DEFAULT (CURDATE()),
     UserId INTEGER,
     PostId INTEGER,
     ParentResponseId INTEGER,
