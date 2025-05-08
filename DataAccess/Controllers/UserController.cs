@@ -104,6 +104,43 @@ public class UserController : AutoDbConnection
         }
         return count > 0;
     }
+
+    public async Task<RoleType?> GetUserRole(string loginKey)
+    {
+        string sql = "SELECT roleid FROM users WHERE loginkey = @Key";
+        try
+        {
+            return await _connection.QueryFirstOrDefaultAsync<RoleType>(sql, new { Key = loginKey });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    // We can also complete the IsCounselor method that was started:
+    public async Task<bool> IsCounselor(string loginKey)
+    {
+        var role = await GetUserRole(loginKey);
+        return role == RoleType.Counselor;
+    }
+
+public async Task<int?> GetUserIdFromLoginKey(string loginKey)
+{
+    string sql = "SELECT id FROM users WHERE loginkey = @LoginKey";
+    
+    try
+    {
+        return await _connection.QueryFirstOrDefaultAsync<int?>(sql, new
+        {
+            LoginKey = loginKey
+        });
+    }
+    catch
+    {
+        return null;
+    }
+}
 }
 
 public static class LoginKey
