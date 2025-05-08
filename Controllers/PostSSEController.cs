@@ -246,8 +246,20 @@ public class PostSSEController : ControllerBase
                                     <span data-text='$likes'></span>
                                     <button data-on-click='@post(""/forum/interact?postId={selected.id}&action=0"")' class=""btn btn-sm btn-outline-danger dislike-btn"">👎</button>
                                     <span data-text='$dislikes'></span>
+                                    <div class=""mt-2"" style=""color: red;"" data-text=""'* ' + $interactError"" data-show=""$interactError != ''""></div>
                                 </div> 
-                                <div class=""mt-2"" style=""color: red;"" data-text=""'* ' + $interactError"" data-show=""$interactError != ''""></div>
+                                <div
+                                    class=""mt-3"" 
+                                    id='comments'
+                                    data-signals=""{{comments: [
+                                        {{id: 1, text: 'test', username: 'testing'}},
+                                        {{id: 2, text: 'hello world', username: 'bob'}}
+                                    ]}}""
+                                >
+                                    <post-comments
+                                        data-attr-comments='$comments'
+                                    </post-comments>
+                                </div>
                             </div>
                         </div>
                         <div class=""col-md-4"">
