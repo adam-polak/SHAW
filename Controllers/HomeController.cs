@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SHAW.Controllers.Util;
 using SHAW.DataAccess.Util;
 
 namespace SHAW.Controllers;
@@ -19,8 +20,7 @@ public class HomeController : ControllerBase
     [HttpGet("")]
     public async Task<IActionResult> HomePage()
     {
-        var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
-        if (!cookieExists || string.IsNullOrEmpty(key))
+        if (!RequestUtil.TryGetLoginKey(Request, out string key))
         {
             return Redirect("index.html");
         }

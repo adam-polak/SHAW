@@ -67,6 +67,7 @@ public static class RoleFactory
 
                     if(dict.GetValueOrDefault(key) != role.Id)
                     {
+                        Console.WriteLine($"id doesn't match {key} {dict.GetValueOrDefault(key)} {role.Id}");
                         needToLoad = true;
                         break;
                     }

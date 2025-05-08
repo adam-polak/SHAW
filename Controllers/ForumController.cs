@@ -1,8 +1,4 @@
-using System.Data.Common;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using SHAW.Controllers.Util;
-using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 
 namespace SHAW.Controllers;
@@ -14,6 +10,8 @@ public class PostSignalModel
     public required string author { get; set; }
     public required string date { get; set; }
     public required string body { get; set; }
+    public int likes { get; set; }
+    public int dislikes { get; set; }
 }
 
 public class PostViewSignalModel
@@ -50,7 +48,6 @@ public class ForumController : ControllerBase
         {
             return Redirect("index.html");
         }
-
 
         using (var c = CreateUserDbController())
         {

@@ -1,12 +1,8 @@
-using System.Data.Common;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SHAW.Controllers.Util;
-using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
+using SHAW.DataAccess.Models;
 using StarFederation.Datastar.DependencyInjection;
-using StarFederation.Datastar.ModelBinding;
 
 namespace SHAW.Controllers;
 
@@ -19,6 +15,11 @@ public class PostSSEController : ControllerBase
 
     private DataAccess.Controllers.PostController CreatePostDbController() =>
         new DataAccess.Controllers.PostController(DbConnectionFactory.CreateDbConnection(_env));
+
+    private DataAccess.Controllers.UserController CreateUserDbController()
+    {
+        return new DataAccess.Controllers.UserController(DbConnectionFactory.CreateDbConnection(_env));
+    }
 
     private async Task<T> WithPostController<T>(Func<DataAccess.Controllers.PostController, Task<T>> action)
     {
@@ -47,7 +48,9 @@ public class PostSSEController : ControllerBase
             title = p.Title,
             author = p.Author,
             date = p.CreatedOn.ToString("yyyy-MM-dd"),
-            body = p.Body
+            body = p.Body,
+            likes = p.Likes,
+            dislikes = p.Dislikes
         });
 
         var json = System.Text.Json.JsonSerializer.Serialize(postsFormatted);
@@ -142,7 +145,7 @@ public class PostSSEController : ControllerBase
     {
         if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(body))
         {
-            _sse.ExecuteScriptAsync("console.log('Title and body cannot be empty')");
+            await _sse.ExecuteScriptAsync("console.log('Title and body cannot be empty')");
             return;
         }
 
@@ -154,7 +157,7 @@ public class PostSSEController : ControllerBase
         var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
         if (!cookieExists || string.IsNullOrEmpty(key) || !await userController.IsCounselor(key))
         {
-            _sse.ExecuteScriptAsync("console.log('Unauthorized: Only counselors can create posts')");
+            await _sse.ExecuteScriptAsync("console.log('Unauthorized: Only counselors can create posts')");
             return;
         }
 
@@ -164,18 +167,19 @@ public class PostSSEController : ControllerBase
             var userId = await userController.GetUserIdFromLoginKey(key);
             if (userId == null)
             {
-                _sse.ExecuteScriptAsync("console.log('Failed to get user ID')");
+                await _sse.ExecuteScriptAsync("console.log('Failed to get user ID')");
                 return;
             }
 
             await WithPostController(async controller =>
             {
-                await controller.CreatePost(new PostsModel
+                await controller.CreatePost(new PostModel
                 {
                     Title = title,
                     Body = body,
                     CreatedOn = DateTime.UtcNow,
-                    UserId = userId.Value
+                    UserId = userId.Value,
+                    Author = ""
                 });
                 return true;
             });
@@ -184,7 +188,7 @@ public class PostSSEController : ControllerBase
         }
         catch (Exception e)
         {
-            _sse.ExecuteScriptAsync($"console.log('Error creating post: {e.Message}')");
+            await _sse.ExecuteScriptAsync($"console.log('Error creating post: {e.Message}')");
             await _sse.MergeFragmentsAsync(@"
             <div id=""main-left"" class=""col-md-8"">
                 <div class=""alert alert-danger"">
@@ -234,19 +238,28 @@ public class PostSSEController : ControllerBase
                                 <div class=""text-muted mb-3"">
                                     Posted by {selected.author} on {selected.date}
                                 </div>
-                                <p class=""card-text"">{selected.body}</p>
+                                <div 
+                                    class=""mt-2 d-flex gap-2 align-items-center""
+                                    data-signals=""{{interactError: '', likes: '{selected.likes}', dislikes: '{selected.dislikes}'}}""
+                                >
+                                    <button data-on-click='@post(""/forum/interact?postId={selected.id}&action=1"")' class=""btn btn-sm btn-outline-success like-btn"">👍</button>
+                                    <span data-text='$likes'></span>
+                                    <button data-on-click='@post(""/forum/interact?postId={selected.id}&action=0"")' class=""btn btn-sm btn-outline-danger dislike-btn"">👎</button>
+                                    <span data-text='$dislikes'></span>
+                                </div> 
+                                <div class=""mt-2"" style=""color: red;"" data-text=""'* ' + $interactError"" data-show=""$interactError != ''""></div>
                             </div>
                         </div>
-                    </div>
-                    <div class=""col-md-4"">
-                        <div class=""card"">
-                            <div class=""card-body"">
-                                <h5 class=""card-title"">Discussion Guidelines</h5>
-                                <ul class=""list-unstyled"">
-                                    <li class=""mb-2"">✓ Be respectful and supportive</li>
-                                    <li class=""mb-2"">✓ Stay on topic</li>
-                                    <li class=""mb-2"">✓ Share constructive feedback</li>
-                                </ul>
+                        <div class=""col-md-4"">
+                            <div class=""card"">
+                                <div class=""card-body"">
+                                    <h5 class=""card-title"">Discussion Guidelines</h5>
+                                    <ul class=""list-unstyled"">
+                                        <li class=""mb-2"">✓ Be respectful and supportive</li>
+                                        <li class=""mb-2"">✓ Stay on topic</li>
+                                        <li class=""mb-2"">✓ Share constructive feedback</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -258,19 +271,66 @@ public class PostSSEController : ControllerBase
         {
             Console.WriteLine(e);
             await _sse.MergeFragmentsAsync(@"
-        <div id=""post-view"">
-            <div class=""container my-5 text-center"">
-                <h2>Error loading post</h2>
-                <p>An error occurred while loading the post.</p>
-                <a href=""forum"" class=""btn btn-primary mt-3"">Return to Forum</a>
-            </div>
-        </div>");
+            <div id=""post-view"">
+                <div class=""container my-5 text-center"">
+                    <h2>Error loading post</h2>
+                    <p>An error occurred while loading the post.</p>
+                    <a href=""forum"" class=""btn btn-primary mt-3"">Return to Forum</a>
+                </div>
+            </div>");
         }
+    }
+
+    [HttpPost("interact")]
+    public async Task Interact()
+    {
+        if(
+            !Request.Query.TryGetValue("postid", out var pid)
+            || !Request.Query.TryGetValue("action", out var a)
+            || !RequestUtil.TryGetLoginKey(Request, out string key)
+        ) 
+        {
+            await _sse.MergeSignalsAsync("{interactError: 'Server error'}");
+            return;
+        }
+
+        int postId;
+        bool action;
+        try
+        {
+            postId = int.Parse(pid.ToString());
+            action = int.Parse(a.ToString()) == 1;
+        }
+        catch
+        {
+            await _sse.MergeSignalsAsync("{interactError: 'Server error'}");
+            return;
+        }
+
+        try
+        {
+            using(var u = CreateUserDbController())
+            using(var c = CreatePostDbController())
+            {
+                int uid = (await u.TryGetUser(key)).Id;
+                await c.TryInteract(postId, uid, action);
+                // refresh likes/dislikes
+                int likes = await c.GetLikes(postId);
+                int dislikes = await c.GetDislikes(postId);
+                
+                await _sse.MergeSignalsAsync($"{{likes: '{likes}', dislikes: '{dislikes}'}}");
+            }
+        }
+        catch
+        {
+            await _sse.MergeSignalsAsync($"{{interactError: 'Failed to {(action ? "like" : "dislike")}}}");
+        }
+
     }
 }
 
 public class PostCreateModel
 {
-    public string Title { get; set; }
-    public string Body { get; set; }
+    public required string Title { get; set; }
+    public required string Body { get; set; }
 }
