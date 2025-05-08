@@ -81,20 +81,36 @@
 
 <main>
     <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card text-center shadow">
-                    <div class="card-body p-5">
-                        <h2 class="card-title text-primary mb-3">Under Construction</h2>
-                        <p class="card-text text-muted">
-                            This page is currently being developed. Please check back soon!
-                        </p>
-                    </div>
-                </div>
+        <h2 class="text-center mb-4">Schedule an Appointment</h2>
+        <form id="appointmentForm" class="card p-4 shadow" method="POST">
+            <div class="mb-3">
+                <label for="studentName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="studentName" required>
             </div>
+            <div class="mb-3">
+                <label for="studentEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="studentEmail" required>
+            </div>
+            <div class="mb-3">
+                <label for="appointmentDate" class="form-label">Preferred Date</label>
+                <input type="date" class="form-control" id="appointmentDate" required>
+            </div>
+            <div class="mb-3">
+                <label for="appointmentTime" class="form-label">Preferred Time</label>
+                <input type="time" class="form-control" id="appointmentTime" required>
+            </div>
+            <div class="mb-3">
+                <label for="reason" class="form-label">Reason for Appointment</label>
+                <textarea class="form-control" id="reason" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Submit Appointment Request</button>
+        </form>
+        <div id="formMessage" class="mt-3 text-center text-success" style="display:none;">
+            Appointment submitted successfully!
         </div>
     </div>
 </main>
+
 
 <!-- Footer -->
 <footer class="footer">
@@ -125,5 +141,23 @@
 
 <!-- Bootstrap Bundle with Popper -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+<script>
+    document.getElementById('appointmentForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('studentName').value;
+        const email = document.getElementById('studentEmail').value;
+        const date = document.getElementById('appointmentDate').value;
+        const time = document.getElementById('appointmentTime').value;
+        const reason = document.getElementById('reason').value;
+
+        console.log('Submitted:', { name, email, date, time, reason });
+
+
+        document.getElementById('formMessage').style.display = 'block';
+        document.getElementById('appointmentForm').reset();
+    });
+</script>
+
 </body>
 </html>
