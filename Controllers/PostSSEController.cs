@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SHAW.Controllers.Util;
 using SHAW.DataAccess.Util;
+using SHAW.DataAccess.Models;
 using StarFederation.Datastar.DependencyInjection;
 
 namespace SHAW.Controllers;
@@ -144,7 +145,7 @@ public class PostSSEController : ControllerBase
     {
         if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(body))
         {
-            _sse.ExecuteScriptAsync("console.log('Title and body cannot be empty')");
+            await _sse.ExecuteScriptAsync("console.log('Title and body cannot be empty')");
             return;
         }
 
@@ -156,7 +157,7 @@ public class PostSSEController : ControllerBase
         var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
         if (!cookieExists || string.IsNullOrEmpty(key) || !await userController.IsCounselor(key))
         {
-            _sse.ExecuteScriptAsync("console.log('Unauthorized: Only counselors can create posts')");
+            await _sse.ExecuteScriptAsync("console.log('Unauthorized: Only counselors can create posts')");
             return;
         }
 
@@ -166,18 +167,19 @@ public class PostSSEController : ControllerBase
             var userId = await userController.GetUserIdFromLoginKey(key);
             if (userId == null)
             {
-                _sse.ExecuteScriptAsync("console.log('Failed to get user ID')");
+                await _sse.ExecuteScriptAsync("console.log('Failed to get user ID')");
                 return;
             }
 
             await WithPostController(async controller =>
             {
-                await controller.CreatePost(new PostsModel
+                await controller.CreatePost(new PostModel
                 {
                     Title = title,
                     Body = body,
                     CreatedOn = DateTime.UtcNow,
-                    UserId = userId.Value
+                    UserId = userId.Value,
+                    Author = ""
                 });
                 return true;
             });
@@ -186,7 +188,7 @@ public class PostSSEController : ControllerBase
         }
         catch (Exception e)
         {
-            _sse.ExecuteScriptAsync($"console.log('Error creating post: {e.Message}')");
+            await _sse.ExecuteScriptAsync($"console.log('Error creating post: {e.Message}')");
             await _sse.MergeFragmentsAsync(@"
             <div id=""main-left"" class=""col-md-8"">
                 <div class=""alert alert-danger"">
@@ -329,6 +331,6 @@ public class PostSSEController : ControllerBase
 
 public class PostCreateModel
 {
-    public string Title { get; set; }
-    public string Body { get; set; }
+    public required string Title { get; set; }
+    public required string Body { get; set; }
 }

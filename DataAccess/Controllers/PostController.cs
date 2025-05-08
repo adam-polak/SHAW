@@ -11,7 +11,7 @@ public class PostController : AutoDbConnection
     {
     }
 
-    public async Task<List<PostsModel>> GetPosts()
+    public async Task<List<PostModel>> GetPosts()
     {
         string sql =
             @"SELECT p.Id, p.Title, p.Body, p.CreatedOn, u.Username as Author
@@ -21,7 +21,7 @@ public class PostController : AutoDbConnection
 
         try
         {
-            var posts = await _connection.QueryAsync<PostsModel>(sql);
+            var posts = await _connection.QueryAsync<PostModel>(sql);
             foreach(var post in posts)
             {
                 post.Likes = await GetLikes(post.Id);
@@ -30,10 +30,9 @@ public class PostController : AutoDbConnection
 
             return posts.ToList();
         }
-        catch(Exception e)
+        catch
         {
-            Console.WriteLine(e);
-            return new List<PostsModel>();
+            return new List<PostModel>();
         }
     }
 
@@ -88,7 +87,7 @@ public class PostController : AutoDbConnection
         await _connection.ExecuteAsync(sql, new { uid = userId, pid = postId });
     }
 
-    public async Task CreatePost(PostsModel postsModel)
+    public async Task CreatePost(PostModel postsModel)
     {
         string sql = @"
         INSERT INTO posts (Title, Body, CreatedOn, UserId)

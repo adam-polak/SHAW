@@ -1,6 +1,6 @@
 namespace SHAW.DataAccess.Models;
 
-public class PostsModel
+public class PostModel
 {
     public int Id { get; set; }
     public required string Title { get; set; }

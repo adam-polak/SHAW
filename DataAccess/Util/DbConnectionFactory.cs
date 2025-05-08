@@ -5,6 +5,8 @@ using System.Text;
 
 namespace SHAW.DataAccess.Util;
 
+public class InvalidDatabaseVersionException : Exception {}
+
 public static class DbConnectionFactory
 {
     private static string DatabaseName = "shawdb";
@@ -94,6 +96,8 @@ public static class DbConnectionFactory
                 versionFileStream.Write(
                     Encoding.ASCII.GetBytes(CurrentDatabaseVersion.ToString())
                 );
+                
+                versionFileStream.Close();
             }
 
             DatabaseLoaded = true;
@@ -116,21 +120,32 @@ public static class DbConnectionFactory
 
         try
         {
+            int storedVersion;
             using(FileStream versionFileStream = File.Open("./SqlFiles/database.version", FileMode.Open))
             using(StreamReader reader = new StreamReader(versionFileStream))
             {
                 string fileStr = reader.ReadToEnd();
-                int storedVersion = int.Parse(fileStr);
-
-                if(storedVersion != CurrentDatabaseVersion)
-                {
-                    throw new Exception();
-                }
-
-                return conn;
+                storedVersion = int.Parse(fileStr);
+                versionFileStream.Close();
             }
+
+            if(storedVersion != CurrentDatabaseVersion)
+            {
+                throw new InvalidDatabaseVersionException();
+            }
+
+            return conn;
         }
-        catch
+        catch(IOException e)
+        {
+            if(e.Message.Contains("being used"))
+            {
+                throw new Exception(e.Message);
+            }
+
+            throw new InvalidDatabaseVersionException();
+        }
+        catch(InvalidDatabaseVersionException)
         {
             DeleteExistingDatabase(env, username, password);
             throw new Exception(InvalidVersionError);
