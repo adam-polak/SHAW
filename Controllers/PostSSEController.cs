@@ -54,7 +54,7 @@ public class PostSSEController : ControllerBase
             dislikes = p.Dislikes
         });
 
-        var json = System.Text.Json.JsonSerializer.Serialize(postsFormatted);
+        var json = JsonSerializer.Serialize(postsFormatted);
 
         await _sse.MergeFragmentsAsync($@"
             <div id=""main-left"" class=""col-md-8"">
@@ -225,19 +225,22 @@ public class PostSSEController : ControllerBase
             await _sse.MergeFragmentsAsync($@"
         <div id=""post-view"">
             <div class=""container my-5"">
-                <div class=""row"">
-                    <div class=""col-md-8"">
+                <div class=""row justify-content-center"">
+                    <div class=""col-lg-10 col-xl-8"">
                         <nav aria-label=""breadcrumb"">
                             <ol class=""breadcrumb"">
                                 <li class=""breadcrumb-item""><a href=""forum"">Forum</a></li>
                                 <li class=""breadcrumb-item active"" aria-current=""page"">{selected.title}</li>
                             </ol>
                         </nav>
-                        <div class=""card"">
+                        <div class=""card mb-4"" style=""width: 100%; height: 90%;"">
                             <div class=""card-body"">
                                 <h1 class=""card-title"">{selected.title}</h1>
                                 <div class=""text-muted mb-3"">
                                     Posted by {selected.author} on {selected.date}
+                                </div>
+                                <div class=""mb-3"">
+                                    {selected.body}
                                 </div>
                                 <div 
                                     class=""mt-2 d-flex gap-2 align-items-center""
@@ -259,17 +262,19 @@ public class PostSSEController : ControllerBase
                                         data-attr-comments='$comments'
                                     </post-comments>
                                 </div>
-                            </div>
-                        </div>
-                        <div class=""col-md-4"">
-                            <div class=""card"">
-                                <div class=""card-body"">
-                                    <h5 class=""card-title"">Discussion Guidelines</h5>
-                                    <ul class=""list-unstyled"">
-                                        <li class=""mb-2"">✓ Be respectful and supportive</li>
-                                        <li class=""mb-2"">✓ Stay on topic</li>
-                                        <li class=""mb-2"">✓ Share constructive feedback</li>
-                                    </ul>
+                                <div class=""mb-2 mt-3 d-flex gap-2"" data-signals=""{{comment: ''}}"">
+                                    <input 
+                                        type=""text"" 
+                                        data-bind='comment'
+                                        class=""form-control"" 
+                                        placeholder=""Enter comment here""
+                                    >
+                                    <button 
+                                        class=""btn btn-success""
+                                        data-on-click='@post(""/forum/comment/add?postId={selected.id}"")'
+                                    >
+                                        +
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -290,6 +295,41 @@ public class PostSSEController : ControllerBase
                 </div>
             </div>");
         }
+    }
+
+    [HttpPost("comment/add")]
+    public async Task AddComment()
+    {
+        if(!Request.Query.TryGetValue("postid", out var pid) || !RequestUtil.TryGetLoginKey(Request, out string key))
+        {
+            return;
+        }
+
+        int postId;
+        try
+        {
+            string comment = (await SignalUtil.GetModelFromSignal<AddCommentModel>(_reader)).comment;
+            if(string.IsNullOrEmpty(comment))
+            {
+                throw new Exception();
+            }
+
+            postId = int.Parse(pid.ToString());
+            using(var u = CreateUserDbController())
+            using(var p = CreatePostDbController())
+            {
+                int uid = (await u.TryGetUser(key)).Id;
+                await p.AddComment(postId, uid, comment);
+            }
+
+            await _sse.MergeSignalsAsync("{comment: ''}");
+        }
+        catch
+        {
+            return;
+        }
+
+        await GetComments();
     }
 
     [HttpGet("comments")]
@@ -380,4 +420,9 @@ public class PostCreateModel
 {
     public required string Title { get; set; }
     public required string Body { get; set; }
+}
+
+public class AddCommentModel
+{
+    public required string comment { get; set; }
 }

@@ -60,33 +60,33 @@ class PostComments extends HTMLElement {
                 .comments-container {
                     border: 1px solid var(--border-color);
                     border-radius: 0.5rem;
-                    padding: 1rem;
+                    padding: .5rem .3rem;
                     background-color: #f9f9f9;
+                    overflow-y: scroll;
+                    height: 200px;
                 }
 
                 .comment-item {
                     background-color: #ffffff;
                     border-radius: 0.5rem;
                     padding: 0.75rem 1rem;
-                    margin-bottom: 1rem;
                     border: 1px solid var(--border-color);
                     transition: background-color 0.2s ease;
                 }
 
                 .comment-author {
+                    font-size: 1.3rem;
                     font-weight: 600;
                     color: var(--primary-purple);
-                    margin-bottom: 0.25rem;
                 }
 
                 .comment-text {
-                    margin-bottom: 0.5rem;
+                    font-size: 1.3rem;
                     color: #333;
-                    line-height: 1.4;
                 }
 
                 .comment-meta {
-                    font-size: 0.85rem;
+                    font-size: 0.7rem;
                     color: #6c757d;
                     display: flex;
                     justify-content: space-between;
@@ -101,11 +101,13 @@ class PostComments extends HTMLElement {
         }
     
         return this._comments.map(comment => `
-            <div class="comment-item" data-id="${comment.id}">
-                <div class="comment-author">${comment.username}</div>
-                <div class="comment-text">${comment.text}</div>
-                <div class="comment-meta">
+            <div class="comment-item mb-2" data-id="${comment.id}">
+                <div class="comment-meta mb-2">
                     <div class="date">${comment.date || 'Just now'}</div>
+                </div>
+                <div class="d-flex gap-1 mb-2">
+                    <div class="comment-author">${comment.username}:</div>
+                    <div class="comment-text">${comment.text}</div>
                 </div>
             </div>
         `).join('');
