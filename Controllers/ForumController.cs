@@ -57,7 +57,9 @@ public class ForumController : ControllerBase
                 true => PhysicalFile(
                     Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "forum.html"),
                     "text/html"),
-                false => BadRequest("Invalid login key"),
+                false => PhysicalFile(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "reset.html"),
+                    "text/html"),
                 null => BadRequest("Server error")
             };
         }

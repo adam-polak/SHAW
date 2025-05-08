@@ -34,7 +34,9 @@ public class HomeController : ControllerBase
                 true => PhysicalFile(
                     Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "home.html"),
                     "text/html"),
-                false => BadRequest("Invalid login key"),
+                false => PhysicalFile(
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "reset.html"),
+                    "text/html"),
                 null => BadRequest("Server error")
             };
         }
