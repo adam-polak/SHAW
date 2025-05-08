@@ -3,6 +3,7 @@ using SHAW.Controllers.Util;
 using SHAW.DataAccess.Util;
 using SHAW.DataAccess.Models;
 using StarFederation.Datastar.DependencyInjection;
+using System.Text.Json;
 
 namespace SHAW.Controllers;
 
@@ -251,10 +252,8 @@ public class PostSSEController : ControllerBase
                                 <div
                                     class=""mt-3"" 
                                     id='comments'
-                                    data-signals=""{{comments: [
-                                        {{id: 1, text: 'test', username: 'testing'}},
-                                        {{id: 2, text: 'hello world', username: 'bob'}}
-                                    ]}}""
+                                    data-on-load='@get(""/forum/comments?postId={selected.id}"")'
+                                    data-signals=""{{comments: []}}""
                                 >
                                     <post-comments
                                         data-attr-comments='$comments'
@@ -290,6 +289,42 @@ public class PostSSEController : ControllerBase
                     <a href=""forum"" class=""btn btn-primary mt-3"">Return to Forum</a>
                 </div>
             </div>");
+        }
+    }
+
+    [HttpGet("comments")]
+    public async Task GetComments()
+    {
+        if(!Request.Query.TryGetValue("postid", out var pid))
+        {
+            return;
+        }
+
+        int postId;
+        try
+        {
+            postId = int.Parse(pid.ToString());
+            List<CommentModel> comments = [];
+            using(var p = CreatePostDbController())
+            {
+                comments = await p.GetComments(postId);
+            }
+
+            var commentsFormatted = comments.Select(x => new {
+                id = x.Id,
+                text = x.Content,
+                date = x.CreatedOn.ToString("yyyy-MM-dd"),
+                username = x.Username
+            });
+            
+            var json = JsonSerializer.Serialize(commentsFormatted);
+
+            await _sse.MergeSignalsAsync($"{{comments: {json}}}");
+        }
+        catch 
+        {
+            Console.WriteLine("failed to get comments");
+            return;
         }
     }
 

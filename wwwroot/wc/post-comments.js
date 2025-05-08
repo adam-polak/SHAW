@@ -10,7 +10,8 @@
  * [
  *   {
  *     "id": number,          // Unique identifier for the comment
- *     "text": string,       // Comment to display
+ *     "text": string,       // Comment to display,
+ *     "date": string        // Date the comment was posted
  *     "username": string,      // Username of comment author
  *   },
  *   ...
