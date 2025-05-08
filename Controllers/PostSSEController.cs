@@ -1,14 +1,7 @@
-using System.Data.Common;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using SHAW.Controllers.Util;
-using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 using StarFederation.Datastar.DependencyInjection;
-using StarFederation.Datastar.ModelBinding;
 
 namespace SHAW.Controllers;
 
@@ -21,6 +14,11 @@ public class PostSSEController : ControllerBase
 
     private DataAccess.Controllers.PostController CreatePostDbController() =>
         new DataAccess.Controllers.PostController(DbConnectionFactory.CreateDbConnection(_env));
+
+    private DataAccess.Controllers.UserController CreateUserDbController()
+    {
+        return new DataAccess.Controllers.UserController(DbConnectionFactory.CreateDbConnection(_env));
+    }
 
     private async Task<T> WithPostController<T>(Func<DataAccess.Controllers.PostController, Task<T>> action)
     {
@@ -110,12 +108,12 @@ public class PostSSEController : ControllerBase
                                     <p class=""card-text"">{selected.body}</p>
                                     <div 
                                         class=""mt-2 d-flex gap-2 align-items-center""
-                                        data-signals=""{{interactError: ''}}""
+                                        data-signals=""{{interactError: '', likes: '{selected.likes}', dislikes: '{selected.dislikes}'}}""
                                     >
                                         <button data-on-click='@post(""/forum/interact?postId={selected.id}&action=1"")' class=""btn btn-sm btn-outline-success like-btn"">👍</button>
-                                        <span>{selected.likes}</span>
+                                        <span data-text='$likes'></span>
                                         <button data-on-click='@post(""/forum/interact?postId={selected.id}&action=0"")' class=""btn btn-sm btn-outline-danger dislike-btn"">👎</button>
-                                        <span>{selected.dislikes}</span>
+                                        <span data-text='$dislikes'></span>
                                     </div> 
                                     <div class=""mt-2"" style=""color: red;"" data-text=""'* ' + $interactError"" data-show=""$interactError != ''""></div>
                                 </div>
@@ -155,16 +153,46 @@ public class PostSSEController : ControllerBase
     public async Task Interact()
     {
         if(
-            Request.Query.TryGetValue("postid", out var pid)
-            && Request.Query.TryGetValue("action", out var a)
+            !Request.Query.TryGetValue("postid", out var pid)
+            || !Request.Query.TryGetValue("action", out var a)
+            || !RequestUtil.TryGetLoginKey(Request, out string key)
         ) 
         {
-            int postId = int.Parse(pid.ToString());
-            int action = int.Parse(a.ToString());
+            await _sse.MergeSignalsAsync("{interactError: 'Server error'}");
+            return;
         }
-        else
+
+        int postId;
+        bool action;
+        try
+        {
+            postId = int.Parse(pid.ToString());
+            action = int.Parse(a.ToString()) == 1;
+        }
+        catch
         {
             await _sse.MergeSignalsAsync("{interactError: 'Server error'}");
+            return;
         }
+
+        try
+        {
+            using(var u = CreateUserDbController())
+            using(var c = CreatePostDbController())
+            {
+                int uid = (await u.TryGetUser(key)).Id;
+                await c.TryInteract(postId, uid, action);
+                // refresh likes/dislikes
+                int likes = await c.GetLikes(postId);
+                int dislikes = await c.GetDislikes(postId);
+                
+                await _sse.MergeSignalsAsync($"{{likes: '{likes}', dislikes: '{dislikes}'}}");
+            }
+        }
+        catch
+        {
+            await _sse.MergeSignalsAsync($"{{interactError: 'Failed to {(action ? "like" : "dislike")}}}");
+        }
+
     }
 }

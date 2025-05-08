@@ -22,25 +22,67 @@ public class PostController : AutoDbConnection
             var posts = await _connection.QueryAsync<PostsModel>(sql);
             foreach(var post in posts)
             {
-                post.Likes = await TryGetLikes(post.Id);
-                post.Dislikes = await TryGetDislikes(post.Id);
+                post.Likes = await GetLikes(post.Id);
+                post.Dislikes = await GetDislikes(post.Id);
             }
 
             return posts.ToList();
         }
-        catch
+        catch(Exception e)
         {
+            Console.WriteLine(e);
             return new List<PostsModel>();
         }
     }
 
-    public async Task<int> TryGetLikes(int postId)
+    public async Task<int> GetLikes(int postId)
     {
-        return 0;
+        string sql = "SELECT COUNT(*)"
+                    + " FROM post_interactions"
+                    + " WHERE PostId = @pid AND Vote = 1;";
+
+        return 
+        (
+            await _connection.QueryAsync<int>
+            (
+                sql, new 
+                {
+                    pid = postId
+                }
+            )
+        ).FirstOrDefault();
     }
 
-    public async Task<int> TryGetDislikes(int postId)
+    public async Task<int> GetDislikes(int postId)
     {
-        return 0;
+        string sql = "SELECT COUNT(*)"
+                    + " FROM post_interactions"
+                    + " WHERE PostId = @pid AND Vote = 0;";
+
+        return 
+        (
+            await _connection.QueryAsync<int>
+            (
+                sql, new 
+                {
+                    pid = postId
+                }
+            )
+        ).FirstOrDefault();
+    }
+
+    /// <summary>
+    /// Try to interact with the post
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <param name="userId"></param>
+    /// <param name="action">if true then like the post, else dislike</param>
+    /// <returns></returns>
+    public async Task TryInteract(int postId, int userId, bool like)
+    {
+        string sql = "INSERT INTO post_interactions (Vote, UserId, PostId)"
+                    + $" VALUES ({(like ? 1 : 0)}, @uid, @pid)"
+                    + $" ON DUPLICATE KEY UPDATE Vote = {(like ? 1 : 0)};";
+        await _connection.ExecuteAsync(sql, new { uid = userId, pid = postId });
     }
 }

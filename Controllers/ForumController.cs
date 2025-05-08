@@ -1,8 +1,4 @@
-using System.Data.Common;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using SHAW.Controllers.Util;
-using SHAW.DataAccess.Models;
 using SHAW.DataAccess.Util;
 
 namespace SHAW.Controllers;
@@ -93,7 +89,6 @@ public class ForumController : ControllerBase
         {
             return Redirect("index.html");
         }
-
 
         using (var c = CreateUserDbController())
         {
