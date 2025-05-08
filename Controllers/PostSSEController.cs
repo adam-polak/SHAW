@@ -59,10 +59,9 @@ public class PostSSEController : ControllerBase
             <div id=""main-left"" class=""col-md-8"">
                 <div id=""title-button-container""
                      class=""d-flex justify-content-between align-items-center mb-4""
-                     data-on-load=""@get('user/isCounselor')""
                 >
                     <h1 class=""mb-4"">Community Forum</h1>
-                    <button data-show=""$isCounselor"" class=""btn btn-primary""
+                    <button class=""btn btn-primary""
                             data-on-click=""@get('forum/posts/create_view')""
                     >
                         <i class=""bi bi-plus-circle""></i>
@@ -89,7 +88,7 @@ public class PostSSEController : ControllerBase
             DbConnectionFactory.CreateDbConnection(_env)
         );
         var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
-        if (!cookieExists || string.IsNullOrEmpty(key) || !await controller.IsCounselor(key))
+        if (!cookieExists || string.IsNullOrEmpty(key))
         {
             return;
         }
@@ -155,9 +154,9 @@ public class PostSSEController : ControllerBase
         );
 
         var cookieExists = Request.Cookies.TryGetValue("loginKey", out string? key);
-        if (!cookieExists || string.IsNullOrEmpty(key) || !await userController.IsCounselor(key))
+        if (!cookieExists || string.IsNullOrEmpty(key))
         {
-            await _sse.ExecuteScriptAsync("console.log('Unauthorized: Only counselors can create posts')");
+            await _sse.ExecuteScriptAsync("console.log('Unauthorized')");
             return;
         }
 
@@ -250,6 +249,7 @@ public class PostSSEController : ControllerBase
                                 <div class=""mt-2"" style=""color: red;"" data-text=""'* ' + $interactError"" data-show=""$interactError != ''""></div>
                             </div>
                         </div>
+                    </div>
                         <div class=""col-md-4"">
                             <div class=""card"">
                                 <div class=""card-body"">
@@ -262,7 +262,6 @@ public class PostSSEController : ControllerBase
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>");
