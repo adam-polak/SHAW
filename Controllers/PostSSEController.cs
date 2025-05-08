@@ -249,6 +249,7 @@ public class PostSSEController : ControllerBase
                                 <div class=""mt-2"" style=""color: red;"" data-text=""'* ' + $interactError"" data-show=""$interactError != ''""></div>
                             </div>
                         </div>
+                    </div>
                         <div class=""col-md-4"">
                             <div class=""card"">
                                 <div class=""card-body"">
@@ -261,7 +262,6 @@ public class PostSSEController : ControllerBase
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>");
